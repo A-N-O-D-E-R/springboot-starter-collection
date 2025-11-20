@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example.plugin</groupId>
+    <artifactId>greeting-plugin</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>Greeting Plugin</name>
+    <description>Example plugin that provides greeting extensions</description>
+
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <pf4j.version>3.10.0</pf4j.version>
+    </properties>
+
+    <dependencies>
+        <!-- PF4J API -->
+        <dependency>
+            <groupId>org.pf4j</groupId>
+            <artifactId>pf4j</artifactId>
+            <version>${pf4j.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Extension Point Interface from the app (provided at runtime) -->
+        <!-- In a real scenario, you would have a separate artifact for extension interfaces -->
+        <!-- For this example, we'll compile against the app's extension interface -->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+
+            <!-- Package plugin with dependencies -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Plugin-Id>greeting-plugin</Plugin-Id>
+                            <Plugin-Version>1.0.0</Plugin-Version>
+                            <Plugin-Provider>Example Plugin Provider</Plugin-Provider>
+                            <Plugin-Class>com.example.plugin.GreetingPlugin</Plugin-Class>
+                        </manifestEntries>
+                    </archive>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
