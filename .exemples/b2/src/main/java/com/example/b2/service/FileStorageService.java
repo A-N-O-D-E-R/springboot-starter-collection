@@ -102,13 +102,8 @@ public class FileStorageService {
      */
     public void deleteFile(String fileName, String bucketName) throws B2Exception {
         logger.info("Deleting file from B2: {}", fileName);
-
-        // Get file info to get the file ID
-        B2FileVersion fileInfo = b2Service.getFileInfo(fileName, bucketName);
-
-        // Delete using file ID and name
-        b2Service.deleteFileVersion(fileInfo.getFileId(), fileName);
-        logger.info("Deleted file from B2: {} (ID: {})", fileName, fileInfo.getFileId());
+        logger.warn("Direct file deletion requires fileId. Use deleteFileVersion(fileId, fileName) instead.");
+        throw new UnsupportedOperationException("Use deleteFileVersion(fileId, fileName) - fileId must be obtained during upload or listing");
     }
 
     /**
@@ -168,17 +163,9 @@ public class FileStorageService {
                     "content", new String(downloadedContent).substring(0, Math.min(100, downloadedContent.length))
             ));
 
-            // Step 4: Get file info
-            B2FileVersion fileInfo = b2Service.getFileInfo(testFileName);
-            results.put("step4_info", Map.of(
-                    "fileName", fileInfo.getFileName(),
-                    "fileId", fileInfo.getFileId(),
-                    "uploadTimestamp", fileInfo.getUploadTimestamp()
-            ));
-
-            // Step 5: Delete from B2
+            // Step 4: Delete from B2 using fileId from upload
             b2Service.deleteFileVersion(uploadedFile.getFileId(), testFileName);
-            results.put("step5_delete", "File deleted successfully");
+            results.put("step4_delete", "Deleted test file: " + testFileName);
 
             results.put("success", true);
             results.put("message", "Demo completed successfully!");

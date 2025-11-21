@@ -9,14 +9,14 @@ echo ""
 
 # Step 1: Install the starter
 echo "[1/4] Installing PF4J Spring Boot Starter..."
-cd ../plugin-springboot-starter
-mvn clean install -q
+cd ../../
+mvn clean install -q -DskipTests
 echo "✓ Starter installed"
 echo ""
 
 # Step 2: Build the plugin
 echo "[2/4] Building greeting plugin..."
-cd ../exemples/plugin
+cd .exemples/plugins/plugin
 mvn clean package -q
 echo "✓ Plugin built: target/greeting-plugin-1.0.0.jar"
 echo ""

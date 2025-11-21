@@ -37,7 +37,7 @@
         <!-- B2 Spring Boot Starter -->
         <dependency>
             <groupId>com.anode</groupId>
-            <artifactId>b2-spring-boot-starter</artifactId>
+            <artifactId>spring-boot-starter-b2</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 

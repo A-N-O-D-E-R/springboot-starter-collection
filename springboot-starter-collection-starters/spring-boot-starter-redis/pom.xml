@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.anode</groupId>
+        <artifactId>springboot-starter-collection</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>spring-boot-starter-redis</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Redis Spring Boot Starter</name>
+    <description>Spring Boot starter for Redis with AWS ElastiCache/Valkey IAM authentication and Kryo serialization</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.anode</groupId>
+            <artifactId>springboot-starter-collection-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.anode</groupId>
+            <artifactId>springboot-starter-collection-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.awspring.cloud</groupId>
+            <artifactId>spring-cloud-aws-starter</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>
