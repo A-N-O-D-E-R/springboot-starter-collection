@@ -1,0 +1,3 @@
+com.anode.autoconfiguration.b2.B2AutoConfiguration
+com.anode.autoconfiguration.plugin.PluginAutoConfiguration
+com.anode.autoconfiguration.redis.RedisAutoConfiguration

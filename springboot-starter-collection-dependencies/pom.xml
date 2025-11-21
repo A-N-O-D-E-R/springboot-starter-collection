@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.anode</groupId>
+    <artifactId>springboot-starter-collection-dependencies</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <b2-sdk.version>6.2.1</b2-sdk.version>
+        <pf4j.version>3.10.0</pf4j.version>
+        <aws-advanced-jdbc-wrapper.version>2.6.0</aws-advanced-jdbc-wrapper.version>
+        <io.awspring.cloud.version>3.4.0</io.awspring.cloud.version>
+        <kryo.version>5.6.2</kryo.version>
+        <snappy.version>1.1.10.7</snappy.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Internal modules -->
+            <dependency>
+                <groupId>com.anode</groupId>
+                <artifactId>springboot-starter-collection-autoconfigure</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.anode</groupId>
+                <artifactId>springboot-starter-collection-b2</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.anode</groupId>
+                <artifactId>spring-boot-starter-b2</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.anode</groupId>
+                <artifactId>springboot-starter-collection-plugin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.anode</groupId>
+                <artifactId>spring-boot-starter-plugin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- External dependencies -->
+            <dependency>
+                <groupId>com.backblaze.b2</groupId>
+                <artifactId>b2-sdk-core</artifactId>
+                <version>${b2-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.backblaze.b2</groupId>
+                <artifactId>b2-sdk-httpclient</artifactId>
+                <version>${b2-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.pf4j</groupId>
+                <artifactId>pf4j</artifactId>
+                <version>${pf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.anode</groupId>
+                <artifactId>springboot-starter-collection-jdbc</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.anode</groupId>
+                <artifactId>spring-boot-starter-jdbc</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>software.amazon.jdbc</groupId>
+                <artifactId>aws-advanced-jdbc-wrapper</artifactId>
+                <version>${aws-advanced-jdbc-wrapper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.anode</groupId>
+                <artifactId>springboot-starter-collection-redis</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.anode</groupId>
+                <artifactId>spring-boot-starter-redis</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.esotericsoftware</groupId>
+                <artifactId>kryo</artifactId>
+                <version>${kryo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xerial.snappy</groupId>
+                <artifactId>snappy-java</artifactId>
+                <version>${snappy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.awspring.cloud</groupId>
+                <artifactId>spring-cloud-aws-dependencies</artifactId>
+                <version>${io.awspring.cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
