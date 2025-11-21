@@ -29,6 +29,10 @@
             <artifactId>springboot-starter-collection-redis</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.anode</groupId>
+            <artifactId>springboot-starter-collection-modbus</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
