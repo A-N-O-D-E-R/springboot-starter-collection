@@ -37,7 +37,7 @@
         <!-- PF4J Spring Boot Starter -->
         <dependency>
             <groupId>com.anode</groupId>
-            <artifactId>plugin-spring-boot-starter</artifactId>
+            <artifactId>spring-boot-starter-plugin</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 

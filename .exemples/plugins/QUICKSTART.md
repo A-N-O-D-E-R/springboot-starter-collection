@@ -48,7 +48,7 @@ Expected output:
 ### 1. Install the Starter
 
 ```bash
-cd plugin-springboot-starter
+cd springboot-starter-collection
 mvn clean install
 ```
 
@@ -59,7 +59,7 @@ Add this dependency to your `pom.xml`:
 ```xml
 <dependency>
     <groupId>com.anode</groupId>
-    <artifactId>plugin-spring-boot-starter</artifactId>
+    <artifactId>spring-boot-starter-plugin</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 </dependency>
 ```

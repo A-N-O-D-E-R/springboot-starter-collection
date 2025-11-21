@@ -8,7 +8,36 @@ This repository contains multiple Spring Boot starters that simplify the integra
 
 ## Available Starters
 
-### 1. PF4J Spring Boot Starter
+### 1. JDBC Spring Boot Starter
+
+**Location**: `springboot-starter-collection-starters/spring-boot-starter-jdbc/`
+
+A Spring Boot starter for JDBC with AWS Advanced JDBC Wrapper support for enhanced database connectivity.
+
+**Features**:
+- AWS Advanced JDBC Wrapper with failover support
+- PostgreSQL driver included
+- Environment-based configuration via `JDBC_WRAPPER_SHARED_URL`
+- Utility functions for PostgreSQL database operations
+- Spring Boot 3.4.2 compatible
+- Java 21 support
+
+**Quick Start**:
+```xml
+<dependency>
+    <groupId>com.anode</groupId>
+    <artifactId>spring-boot-starter-jdbc</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+</dependency>
+```
+
+```bash
+export JDBC_WRAPPER_SHARED_URL="jdbc:aws-wrapper:postgresql://my-cluster.us-east-1.rds.amazonaws.com:5432/mydb"
+```
+
+[View Full Documentation](springboot-starter-collection-starters/spring-boot-starter-jdbc/README.md)
+
+### 2. PF4J Spring Boot Starter
 
 **Location**: `plugin-springboot-starter/`
 
@@ -26,7 +55,7 @@ A Spring Boot starter for [PF4J](https://pf4j.org/) (Plugin Framework for Java) 
 ```xml
 <dependency>
     <groupId>com.anode</groupId>
-    <artifactId>plugin-spring-boot-starter</artifactId>
+    <artifactId>spring-boot-starter-plugin</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 </dependency>
 ```
@@ -38,7 +67,7 @@ plugins.pluginsRootFolder=plugins
 
 [View Full Documentation](plugin-springboot-starter/README.md)
 
-### 2. Backblaze B2 Spring Boot Starter
+### 3. Backblaze B2 Spring Boot Starter
 
 **Location**: `b2-springboot-starter/`
 
@@ -56,7 +85,7 @@ A Spring Boot starter for [Backblaze B2](https://www.backblaze.com/b2/cloud-stor
 ```xml
 <dependency>
     <groupId>com.anode</groupId>
-    <artifactId>b2-spring-boot-starter</artifactId>
+    <artifactId>spring-boot-starter-b2</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 </dependency>
 ```
@@ -105,27 +134,70 @@ See [QUICKSTART.md](QUICKSTART.md) for a 5-minute guide to get started with the 
 
 ## Project Structure
 
+This project follows the Spring Boot multi-module pattern:
+
 ```
 .
-├── plugin-springboot-starter/     # PF4J Spring Boot Starter
-│   ├── src/
-│   ├── pom.xml
+├── pom.xml                                          # Root parent POM
+│
+├── springboot-starter-collection-dependencies/      # Dependency management
+│   └── pom.xml
+│
+├── springboot-starter-collection-autoconfigure/     # Auto-configuration
+│   ├── src/main/java/com/anode/autoconfiguration/
+│   │   ├── b2/B2AutoConfiguration.java
+│   │   └── plugin/PluginAutoConfiguration.java
+│   └── pom.xml
+│
+├── springboot-starter-collection-b2/                # B2 core module
+│   ├── src/main/java/com/anode/b2/
+│   │   ├── B2Properties.java
+│   │   └── B2Service.java
+│   └── pom.xml
+│
+├── springboot-starter-collection-plugin/            # Plugin core module
+│   ├── src/main/java/com/anode/plugin/
+│   │   └── PluginsProperties.java
+│   └── pom.xml
+│
+├── springboot-starter-collection-jdbc/              # JDBC core module
+│   ├── src/main/java/com/anode/jdbc/
+│   │   ├── JdbcEnvironmentPostProcessor.java
+│   │   └── JdbcUtils.java
+│   └── pom.xml
+│
+├── springboot-starter-collection-starters/          # Starter modules
+│   ├── spring-boot-starter-b2/
+│   │   ├── pom.xml
+│   │   └── README.md
+│   ├── spring-boot-starter-plugin/
+│   │   ├── pom.xml
+│   │   └── README.md
+│   └── spring-boot-starter-jdbc/
+│       ├── pom.xml
+│       └── README.md
+│
+├── b2-springboot-starter/                           # [Legacy - to be removed]
+├── plugin-springboot-starter/                       # [Legacy - to be removed]
+│
+├── .exemples/                                       # Example applications
+│   ├── app/                                         # PF4J demo application
+│   ├── plugin/                                      # Example plugin
+│   ├── b2/                                          # B2 demo application
 │   └── README.md
 │
-├── b2-springboot-starter/         # Backblaze B2 Spring Boot Starter
-│   ├── src/
-│   ├── pom.xml
-│   └── README.md
-│
-├── .exemples/                     # Example applications
-│   ├── app/                       # PF4J demo application
-│   ├── plugin/                    # Example plugin
-│   ├── b2/                        # B2 demo application
-│   └── README.md
-│
-├── QUICKSTART.md                  # Quick start guide
-└── README.md                      # This file
+├── QUICKSTART.md                                    # Quick start guide
+└── README.md                                        # This file
 ```
+
+### Module Structure
+
+The project follows a layered architecture:
+
+1. **Dependencies Module** (`springboot-starter-collection-dependencies`): Centralized dependency version management
+2. **Core Modules** (`springboot-starter-collection-b2`, `springboot-starter-collection-plugin`, `springboot-starter-collection-jdbc`): Business logic and properties
+3. **Autoconfigure Module** (`springboot-starter-collection-autoconfigure`): Spring Boot auto-configuration
+4. **Starter Modules** (`spring-boot-starter-*`): User-facing starters that combine core + autoconfigure
 
 ## Requirements
 
@@ -137,25 +209,27 @@ See [QUICKSTART.md](QUICKSTART.md) for a 5-minute guide to get started with the 
 
 ### Install All Starters
 
-```bash
-# Install PF4J starter
-cd plugin-springboot-starter
-mvn clean install
+From the root directory:
 
-# Install B2 starter
-cd ../b2-springboot-starter
+```bash
 mvn clean install
 ```
+
+This will build and install all modules in the correct order:
+1. Dependencies module
+2. Core modules (B2, Plugin)
+3. Autoconfigure module
+4. Starter modules
 
 ### Install Specific Starter
 
 ```bash
-# PF4J only
-cd plugin-springboot-starter
+# B2 only
+cd springboot-starter-collection-starters/spring-boot-starter-b2
 mvn clean install
 
-# B2 only
-cd b2-springboot-starter
+# Plugin only
+cd springboot-starter-collection-starters/spring-boot-starter-plugin
 mvn clean install
 ```
 
@@ -269,7 +343,7 @@ mvn test
 | `b2.connectionTimeoutSeconds` | int | `30` | Connection timeout |
 | `b2.socketTimeoutSeconds` | int | `60` | Socket timeout |
 | `b2.maxRetries` | int | `3` | Maximum retry attempts |
-| `b2.userAgent` | String | `b2-spring-boot-starter/0.0.1` | User agent string |
+| `b2.userAgent` | String | `spring-boot-starter-b2/0.0.1` | User agent string |
 
 ## Architecture
 
