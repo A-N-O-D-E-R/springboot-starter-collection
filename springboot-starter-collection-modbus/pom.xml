@@ -12,29 +12,17 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>springboot-starter-collection-autoconfigure</artifactId>
+    <artifactId>springboot-starter-collection-modbus</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>com.anode</groupId>
-            <artifactId>springboot-starter-collection-b2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.anode</groupId>
-            <artifactId>springboot-starter-collection-plugin</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.anode</groupId>
-            <artifactId>springboot-starter-collection-redis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.anode</groupId>
-            <artifactId>springboot-starter-collection-modbus</artifactId>
+            <groupId>com.ghgande</groupId>
+            <artifactId>j2mod</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
+            <artifactId>spring-boot</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
