@@ -13,6 +13,7 @@
         <aws-advanced-jdbc-wrapper.version>2.6.0</aws-advanced-jdbc-wrapper.version>
         <io.awspring.cloud.version>3.4.0</io.awspring.cloud.version>
         <kryo.version>5.6.2</kryo.version>
+        <modbus.version>3.1.0</modbus.version>
         <snappy.version>1.1.10.7</snappy.version>
     </properties>
 
@@ -44,6 +45,16 @@
                 <artifactId>spring-boot-starter-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.anode</groupId>
+                <artifactId>springboot-starter-collection-modbus</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.anode</groupId>
+                <artifactId>spring-boot-starter-modbus</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- External dependencies -->
             <dependency>
@@ -55,6 +66,11 @@
                 <groupId>com.backblaze.b2</groupId>
                 <artifactId>b2-sdk-httpclient</artifactId>
                 <version>${b2-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ghgande</groupId>
+                <artifactId>j2mod</artifactId>
+                <version>${modbus.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.pf4j</groupId>
