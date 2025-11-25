@@ -19,7 +19,7 @@
         <module>springboot-starter-collection-dependencies</module>
         <module>springboot-starter-collection-b2</module>
         <module>springboot-starter-collection-plugin</module>
-         <module>springboot-starter-collection-modbus</module>
+        <module>springboot-starter-collection-modbus</module>
         <module>springboot-starter-collection-jdbc</module>
         <module>springboot-starter-collection-redis</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-b2</module>
@@ -44,6 +44,19 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <distributionManagement>
+        <repository>
+            <id>b2-releases</id>
+            <name>B2 Releases Repository</name>
+            <url>b2://A-N-O-D-E-R/maven-releases</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>b2-snapshots</id>
+            <name>B2 Snapshots Repository</name>
+            <url>b2://A-N-O-D-E-R/maven-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <plugins>
@@ -76,6 +89,13 @@
                 </configuration>
             </plugin>
         </plugins>
+        <extensions>
+            <extension>
+                <groupId>com.anode.maven.wagon</groupId>
+                <artifactId>wagon-b2</artifactId>
+                <version>1.0.0</version>
+            </extension>
+        </extensions>
     </build>
 
     <dependencies>
