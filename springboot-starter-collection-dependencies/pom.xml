@@ -7,6 +7,13 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <parent>
+        <groupId>com.anode</groupId>
+        <artifactId>springboot-starter-collection</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    
     <properties>
         <b2-sdk.version>6.2.1</b2-sdk.version>
         <pf4j.version>3.10.0</pf4j.version>
