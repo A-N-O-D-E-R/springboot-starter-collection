@@ -1,12 +1,15 @@
 package com.anode.autoconfiguration.redis;
 
 import com.anode.redis.AwsRedisCredentialsProviderFactory;
+import com.anode.redis.RedisProperties;
+
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.data.redis.autoconfigure.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
+
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -18,8 +21,9 @@ import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
  * Configures IAM authentication for AWS Redis clusters.
  */
 @AutoConfiguration
-@AutoConfigureBefore(org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration.class)
+@AutoConfigureBefore(org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration.class)
 @ConditionalOnClass(AwsRedisCredentialsProviderFactory.class)
+@EnableConfigurationProperties(RedisProperties.class)
 public class RedisAutoConfiguration {
 
     @Bean

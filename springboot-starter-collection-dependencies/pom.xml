@@ -6,13 +6,6 @@
     <artifactId>springboot-starter-collection-dependencies</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-
-    <parent>
-        <groupId>com.anode</groupId>
-        <artifactId>springboot-starter-collection</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
     
     <properties>
         <b2-sdk.version>6.2.1</b2-sdk.version>
@@ -23,6 +16,16 @@
         <modbus.version>3.1.0</modbus.version>
         <snappy.version>1.1.10.7</snappy.version>
     </properties>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>com.anode.maven.wagon</groupId>
+                <artifactId>wagon-b2</artifactId>
+                <version>1.0.0</version>
+            </extension>
+        </extensions>
+    </build>
 
     <dependencyManagement>
         <dependencies>
