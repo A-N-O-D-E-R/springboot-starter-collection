@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.2</version>
+        <version>4.0.2</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
@@ -30,8 +30,15 @@
     </modules>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
     </properties>
+
+    <scm>
+        <connection>scm:git:git://github.com/A-N-O-D-E-R/springboot-starter-collection.git</connection>
+        <developerConnection>scm:git:git@github.com:A-N-O-D-E-R/springboot-starter-collection.git</developerConnection>
+        <url>https://github.com/A-N-O-D-E-R/springboot-starter-collection</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <dependencyManagement>
         <dependencies>
@@ -86,6 +93,15 @@
                             <artifactId>spring-boot-autoconfigure-processor</artifactId>
                         </path>
                     </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <goals>deploy</goals>
                 </configuration>
             </plugin>
         </plugins>
