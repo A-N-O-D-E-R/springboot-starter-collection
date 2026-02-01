@@ -11,7 +11,7 @@
 
     <groupId>com.anode</groupId>
     <artifactId>springboot-starter-collection</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -37,7 +37,7 @@
         <connection>scm:git:git://github.com/A-N-O-D-E-R/springboot-starter-collection.git</connection>
         <developerConnection>scm:git:git@github.com:A-N-O-D-E-R/springboot-starter-collection.git</developerConnection>
         <url>https://github.com/A-N-O-D-E-R/springboot-starter-collection</url>
-        <tag>v0.0.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencyManagement>
