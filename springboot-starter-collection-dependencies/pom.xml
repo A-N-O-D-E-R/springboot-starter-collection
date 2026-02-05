@@ -62,6 +62,16 @@
             </dependency>
             <dependency>
                 <groupId>com.anode</groupId>
+                <artifactId>springboot-starter-collection-logging</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.anode</groupId>
+                <artifactId>spring-boot-starter-logging</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.anode</groupId>
                 <artifactId>springboot-starter-collection-b2</artifactId>
                 <version>${project.version}</version>
             </dependency>

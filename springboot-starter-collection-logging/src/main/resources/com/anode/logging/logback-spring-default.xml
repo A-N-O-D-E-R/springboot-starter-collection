@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Default logback-spring.xml for event logging starter.
+    Copy this to your application's src/main/resources/logback-spring.xml
+    or include the fragment using <include resource="com/anode/logging/logback-events.xml"/>
+-->
+<configuration>
+    <!-- Spring Boot defaults -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <!-- Properties with defaults -->
+    <springProperty scope="context" name="LOG_PATH" source="logging.event.path" defaultValue="."/>
+    <springProperty scope="context" name="RETENTION_DAYS" source="logging.event.retention-days" defaultValue="30"/>
+
+    <!-- Console appender that excludes EVENT logs to avoid duplicates -->
+    <appender name="CONSOLE_NO_EVENTS" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="com.anode.logging.filter.NonEventMarkerFilter"/>
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>${CONSOLE_LOG_CHARSET}</charset>
+        </encoder>
+    </appender>
+
+    <!-- Event JSON file appender with daily rotation -->
+    <appender name="EVENT_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/events.json</file>
+        <filter class="com.anode.logging.filter.EventMarkerFilter"/>
+        <encoder class="com.anode.logging.encoder.EventJsonEncoder"/>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/events.json.%d{yyyy-MM-dd}</fileNamePattern>
+            <maxHistory>${RETENTION_DAYS}</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE_NO_EVENTS"/>
+        <appender-ref ref="EVENT_FILE"/>
+    </root>
+</configuration>

@@ -22,11 +22,13 @@
         <module>springboot-starter-collection-modbus</module>
         <module>springboot-starter-collection-jdbc</module>
         <module>springboot-starter-collection-redis</module>
+        <module>springboot-starter-collection-logging</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-b2</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-plugin</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-jdbc</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-redis</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-modbus</module>
+        <module>springboot-starter-collection-starters/spring-boot-starter-logging</module>
     </modules>
 
     <properties>
