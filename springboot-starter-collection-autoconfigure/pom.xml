@@ -15,6 +15,11 @@
     <dependencies>
         <dependency>
             <groupId>com.anode</groupId>
+            <artifactId>springboot-starter-collection-logging</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.anode</groupId>
             <artifactId>springboot-starter-collection-b2</artifactId>
         </dependency>
         <dependency>

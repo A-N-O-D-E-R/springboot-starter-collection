@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <!--
+        Event logging configuration fragment.
+        Include this in your logback-spring.xml using:
+        <include resource="com/anode/logging/logback-events.xml"/>
+    -->
+
+    <!-- Event JSON file appender with daily rotation -->
+    <appender name="EVENT_JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logging.event.path:-${LOG_PATH:-.}}/events.json</file>
+        <filter class="com.anode.logging.filter.EventMarkerFilter"/>
+        <encoder class="com.anode.logging.encoder.EventJsonEncoder"/>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logging.event.path:-${LOG_PATH:-.}}/events.json.%d{yyyy-MM-dd}</fileNamePattern>
+            <maxHistory>${logging.event.retention-days:-30}</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Event XML file appender with daily rotation -->
+    <appender name="EVENT_XML_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logging.event.path:-${LOG_PATH:-.}}/events.xml</file>
+        <filter class="com.anode.logging.filter.EventMarkerFilter"/>
+        <encoder class="com.anode.logging.encoder.EventXmlEncoder"/>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logging.event.path:-${LOG_PATH:-.}}/events.xml.%d{yyyy-MM-dd}</fileNamePattern>
+            <maxHistory>${logging.event.retention-days:-30}</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Attach JSON appender to root logger (default) -->
+    <root>
+        <appender-ref ref="EVENT_JSON_FILE"/>
+    </root>
+</included>

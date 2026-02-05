@@ -8,17 +8,28 @@
     <parent>
         <groupId>com.anode</groupId>
         <artifactId>springboot-starter-collection</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>springboot-starter-collection-logging</artifactId>
     <packaging>jar</packaging>
 
+    <name>Spring Boot Starter Collection - Logging</name>
+    <description>Structured event logging with SLF4J, Logback, and JSON serialization</description>
+
     <dependencies>
         <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
     </dependencies>
 
