@@ -4,11 +4,8 @@ import com.anode.modbus.protocol.ModbusMaster;
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.procimg.Register;
 import com.ghgande.j2mod.modbus.procimg.SimpleInputRegister;
-import org.springframework.stereotype.Service;
-
 import java.util.Map;
 
-@Service
 public class ModbusIOService {
 
     private final Map<String, ModbusMaster> masters;
