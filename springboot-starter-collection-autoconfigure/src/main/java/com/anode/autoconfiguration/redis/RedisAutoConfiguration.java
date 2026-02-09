@@ -21,8 +21,11 @@ import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
  * Configures IAM authentication for AWS Redis clusters.
  */
 @AutoConfiguration
-@AutoConfigureBefore(org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration.class)
-@ConditionalOnClass(AwsRedisCredentialsProviderFactory.class)
+@AutoConfigureBefore(name = "org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration")
+@ConditionalOnClass(name = {
+        "com.anode.redis.AwsRedisCredentialsProviderFactory",
+        "org.springframework.boot.data.redis.autoconfigure.LettuceClientConfigurationBuilderCustomizer"
+})
 @EnableConfigurationProperties(RedisProperties.class)
 public class RedisAutoConfiguration {
 
