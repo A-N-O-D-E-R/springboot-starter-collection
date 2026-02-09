@@ -35,6 +35,11 @@
             <artifactId>springboot-starter-collection-modbus</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.anode</groupId>
+            <artifactId>springboot-starter-collection-sila-client</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>

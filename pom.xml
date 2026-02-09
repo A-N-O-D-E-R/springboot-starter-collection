@@ -29,6 +29,8 @@
         <module>springboot-starter-collection-starters/spring-boot-starter-redis</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-modbus</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-logging</module>
+        <module>springboot-starter-collection-sila-client</module>
+        <module>springboot-starter-collection-starters/spring-boot-starter-sila-client</module>
     </modules>
 
     <properties>

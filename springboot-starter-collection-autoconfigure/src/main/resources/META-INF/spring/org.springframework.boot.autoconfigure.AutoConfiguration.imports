@@ -3,3 +3,4 @@ com.anode.autoconfiguration.plugin.PluginAutoConfiguration
 com.anode.autoconfiguration.redis.RedisAutoConfiguration
 com.anode.autoconfiguration.modbus.ModbusAutoConfiguration
 com.anode.autoconfiguration.logging.EventLoggingAutoConfiguration
+com.anode.autoconfiguration.sila.SilaClientAutoConfiguration
