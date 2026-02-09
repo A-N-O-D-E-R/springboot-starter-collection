@@ -1,5 +1,6 @@
 package com.anode.autoconfiguration.modbus;
 
+import com.anode.modbus.ModbusIOService;
 import com.anode.modbus.ModbusProperties;
 import com.anode.modbus.protocol.ModbusMaster;
 import com.anode.modbus.protocol.RtuModbusMaster;
@@ -24,6 +25,12 @@ import java.util.Map;
 @ConditionalOnClass(TCPMasterConnection.class)
 @EnableConfigurationProperties(ModbusProperties.class)
 public class ModbusAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ModbusIOService modbusIOService(Map<String, ModbusMaster> modbusConnections) {
+        return new ModbusIOService(modbusConnections);
+    }
 
     @Bean
     @ConditionalOnMissingBean
@@ -86,8 +93,8 @@ public class ModbusAutoConfiguration {
 
     private ModbusMaster createRtuClient(URI uri, ModbusProperties.Connection config) {
         try {
-            String device = uri.getHost();
-            int baudRate = Integer.parseInt(uri.getPath().substring(1));
+            String device = uri.getPath().substring(0,uri.getPath().lastIndexOf(":"));
+            int baudRate = Integer.parseInt(uri.getPath().substring(uri.getPath().lastIndexOf(":")+1));
 
             SerialParameters params = new SerialParameters();
             params.setPortName(device);
