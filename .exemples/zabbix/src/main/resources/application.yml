@@ -1,0 +1,25 @@
+zabbix:
+  enabled: true
+
+  # Passive mode: Zabbix server queries this agent
+  passive:
+    enabled: true
+    listen-port: 10050
+    # listen-address: 0.0.0.0  # bind to specific interface
+
+  # Active mode: this agent pushes metrics to Zabbix server
+  active:
+    enabled: false
+    host-name: my-spring-app
+    server-address: zabbix-server.example.com
+    server-port: 10051
+    refresh-interval: 120
+    # psk-identity: PSK_ID
+    # psk: aabbccdd...
+
+  # Sender: standalone sender for pushing trapper items
+  sender:
+    host: zabbix-server.example.com
+    port: 10051
+    connect-timeout: 3000
+    socket-timeout: 3000
