@@ -15,6 +15,8 @@
         <kryo.version>5.6.2</kryo.version>
         <modbus.version>3.1.0</modbus.version>
         <snappy.version>1.1.10.7</snappy.version>
+        <org-json.version>20240303</org-json.version>
+        <bouncycastle.version>1.80</bouncycastle.version>
     </properties>
 
     <distributionManagement>
@@ -101,7 +103,33 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.anode</groupId>
+                <artifactId>springboot-starter-collection-zabbix</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.anode</groupId>
+                <artifactId>spring-boot-starter-zabbix</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- External dependencies -->
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${org-json.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bctls-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.backblaze.b2</groupId>
                 <artifactId>b2-sdk-core</artifactId>

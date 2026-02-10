@@ -9,43 +9,34 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>springboot-starter-collection-autoconfigure</artifactId>
+    <artifactId>springboot-starter-collection-zabbix</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>com.anode</groupId>
-            <artifactId>springboot-starter-collection-logging</artifactId>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.anode</groupId>
-            <artifactId>springboot-starter-collection-b2</artifactId>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.anode</groupId>
-            <artifactId>springboot-starter-collection-plugin</artifactId>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.anode</groupId>
-            <artifactId>springboot-starter-collection-redis</artifactId>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bctls-jdk18on</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.anode</groupId>
-            <artifactId>springboot-starter-collection-modbus</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.anode</groupId>
-            <artifactId>springboot-starter-collection-zabbix</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-            <optional>true</optional>
+            <artifactId>spring-boot</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
