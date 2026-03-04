@@ -5,6 +5,8 @@ import ch.qos.logback.core.filter.Filter;
 import ch.qos.logback.core.spi.FilterReply;
 import org.slf4j.Marker;
 
+import java.util.List;
+
 /**
  * Logback filter that denies log events marked with EVENT marker.
  * Use this filter on console/file appenders to prevent duplicate logging of events.
@@ -15,12 +17,14 @@ public class NonEventMarkerFilter extends Filter<ILoggingEvent> {
 
     @Override
     public FilterReply decide(ILoggingEvent event) {
-        Marker marker = event.getMarker();
-        if (marker == null) {
+        List<Marker> markers = event.getMarkerList();
+        if (markers == null || markers.isEmpty()) {
             return FilterReply.NEUTRAL;
         }
-        if (containsEventMarker(marker)) {
-            return FilterReply.DENY;
+        for (Marker marker : markers) {
+            if (containsEventMarker(marker)) {
+                return FilterReply.DENY;
+            }
         }
         return FilterReply.NEUTRAL;
     }

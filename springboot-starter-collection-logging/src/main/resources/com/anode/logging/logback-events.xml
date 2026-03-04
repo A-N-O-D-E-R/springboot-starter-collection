@@ -28,8 +28,9 @@
         </rollingPolicy>
     </appender>
 
-    <!-- Attach JSON appender to root logger (default) -->
+    <!-- Attach event appenders to root logger -->
     <root>
         <appender-ref ref="EVENT_JSON_FILE"/>
+        <appender-ref ref="EVENT_XML_FILE"/>
     </root>
 </included>

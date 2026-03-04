@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -43,7 +45,7 @@ class EventMarkerFilterTest {
 
     private ILoggingEvent eventWithMarker(Marker marker) {
         ILoggingEvent event = mock(ILoggingEvent.class);
-        when(event.getMarker()).thenReturn(marker);
+        when(event.getMarkerList()).thenReturn(marker != null ? List.of(marker) : List.of());
         return event;
     }
 }

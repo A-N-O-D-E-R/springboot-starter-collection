@@ -6,6 +6,8 @@ import ch.qos.logback.core.spi.FilterReply;
 import com.anode.logging.EventMarkers;
 import org.slf4j.Marker;
 
+import java.util.List;
+
 /**
  * Logback filter that accepts only log events marked with {@link EventMarkers#EVENT}.
  * All other events are denied.
@@ -16,12 +18,14 @@ public class EventMarkerFilter extends Filter<ILoggingEvent> {
 
     @Override
     public FilterReply decide(ILoggingEvent event) {
-        Marker marker = event.getMarker();
-        if (marker == null) {
+        List<Marker> markers = event.getMarkerList();
+        if (markers == null || markers.isEmpty()) {
             return FilterReply.DENY;
         }
-        if (containsEventMarker(marker)) {
-            return FilterReply.ACCEPT;
+        for (Marker marker : markers) {
+            if (containsEventMarker(marker)) {
+                return FilterReply.ACCEPT;
+            }
         }
         return FilterReply.DENY;
     }
