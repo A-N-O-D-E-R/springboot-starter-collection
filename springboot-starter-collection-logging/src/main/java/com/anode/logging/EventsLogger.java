@@ -86,7 +86,7 @@ public class EventsLogger {
      * @param arguments the message arguments
      */
     public void log(String format, Object... arguments) {
-        var loggingEventBuilder = log.atInfo().addKeyValue("category", category);
+        var loggingEventBuilder = log.atInfo().addMarker(EventMarkers.EVENT).addKeyValue("category", category);
 
         attributes.get().forEach(loggingEventBuilder::addKeyValue);
         requestAttributes.get().forEach(loggingEventBuilder::addKeyValue);
