@@ -9,6 +9,7 @@
     
     <properties>
         <b2-sdk.version>6.2.1</b2-sdk.version>
+        <spring-security-kerberos.version>2.1.0</spring-security-kerberos.version>
         <pf4j.version>3.10.0</pf4j.version>
         <aws-advanced-jdbc-wrapper.version>2.6.0</aws-advanced-jdbc-wrapper.version>
         <io.awspring.cloud.version>3.4.0</io.awspring.cloud.version>
@@ -101,6 +102,16 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.anode</groupId>
+                <artifactId>springboot-starter-collection-security</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.anode</groupId>
+                <artifactId>spring-boot-starter-security</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!-- External dependencies -->
             <dependency>
                 <groupId>com.backblaze.b2</groupId>
@@ -156,6 +167,16 @@
                 <groupId>org.xerial.snappy</groupId>
                 <artifactId>snappy-java</artifactId>
                 <version>${snappy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security.kerberos</groupId>
+                <artifactId>spring-security-kerberos-web</artifactId>
+                <version>${spring-security-kerberos.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security.kerberos</groupId>
+                <artifactId>spring-security-kerberos-core</artifactId>
+                <version>${spring-security-kerberos.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.awspring.cloud</groupId>
