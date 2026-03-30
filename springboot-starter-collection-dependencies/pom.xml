@@ -14,6 +14,7 @@
         <aws-advanced-jdbc-wrapper.version>2.6.0</aws-advanced-jdbc-wrapper.version>
         <io.awspring.cloud.version>3.4.0</io.awspring.cloud.version>
         <kryo.version>5.6.2</kryo.version>
+        <okta.version>3.1.0</okta.version>
         <modbus.version>3.1.0</modbus.version>
         <snappy.version>1.1.10.7</snappy.version>
     </properties>
@@ -167,6 +168,16 @@
                 <groupId>org.xerial.snappy</groupId>
                 <artifactId>snappy-java</artifactId>
                 <version>${snappy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.okta.spring</groupId>
+                <artifactId>okta-spring-boot-starter</artifactId>
+                <version>${okta.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.okta.spring</groupId>
+                <artifactId>okta-spring-security-oauth2</artifactId>
+                <version>${okta.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security.kerberos</groupId>
