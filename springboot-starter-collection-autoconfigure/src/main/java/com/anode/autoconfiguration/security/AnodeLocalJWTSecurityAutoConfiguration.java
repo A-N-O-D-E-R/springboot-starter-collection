@@ -19,7 +19,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -34,7 +36,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @ConditionalOnClass({EnableWebSecurity.class, AnodeLocalJWTEnvironmentPostProcessor.class})
 @EnableConfigurationProperties({AnodeSecurityProperties.class})
 @EnableMethodSecurity(securedEnabled = true)
-@ConditionalOnProperty(value = AnodeLocalJWTEnvironmentPostProcessor.ENV_LOCAL_JWT_ENABLED, havingValue = "true")
+@ConditionalOnProperty(value ="anode.security.env-local-jwt", havingValue = "true")
 @ConditionalOnDefaultWebSecurity
 @AutoConfigureOrder(-1)
 public class AnodeLocalJWTSecurityAutoConfiguration {
@@ -46,6 +48,20 @@ public class AnodeLocalJWTSecurityAutoConfiguration {
         var secretKey = new SecretKeySpec(keyBytes, "HmacSHA256");
         return NimbusJwtDecoder.withSecretKey(secretKey)
                 .macAlgorithm(MacAlgorithm.HS256)
+                .build();
+    }
+
+    @Bean
+    public JwtEncoder jwtEncoder(Environment environment) {
+        var secret = environment.getProperty(
+                "spring.security.oauth2.resourceserver.jwt.secret",
+                "dev-secret-key"
+        );
+        var keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        var secretKey = new SecretKeySpec(keyBytes, "HmacSHA256");
+
+        return NimbusJwtEncoder.withSecretKey(secretKey)
+                .algorithm(MacAlgorithm.HS256)
                 .build();
     }
 
@@ -65,6 +81,16 @@ public class AnodeLocalJWTSecurityAutoConfiguration {
                         .requestMatchers(allowedPatterns).permitAll()
                         .anyRequest().authenticated())
                 .cors(withDefaults())
+                .formLogin(form -> form
+                        .loginPage(anodeSecurityProperties.getLoginUrl())          // your custom page
+                        .loginProcessingUrl("/api/users/login") // POST endpoint
+                        .defaultSuccessUrl("/", true)
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl(anodeSecurityProperties.getPostLogoutUrl())
+                        .logoutSuccessUrl(anodeSecurityProperties.getLoginUrl()+"?logout")
+                )
                 .csrf(AbstractHttpConfigurer::disable)
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()));
 
