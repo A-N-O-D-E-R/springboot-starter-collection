@@ -11,6 +11,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class AnodeLocalJWTEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
@@ -41,7 +42,7 @@ public class AnodeLocalJWTEnvironmentPostProcessor implements EnvironmentPostPro
 
     private void localJwtPostProcessor(ConfigurableEnvironment environment) {
 
-        var secret = environment.getProperty("JWT_SECRET", "dev-secret-key");
+        var secret = environment.getProperty("JWT_SECRET", UUID.randomUUID().toString().replace("-", ""));
         var issuer = environment.getProperty("JWT_ISSUER", "anode-local");
         var expiration = environment.getProperty("JWT_EXPIRATION", "3600");
 
