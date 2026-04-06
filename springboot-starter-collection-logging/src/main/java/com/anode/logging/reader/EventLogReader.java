@@ -7,6 +7,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -15,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Reads events from JSON log files (JSON Lines format).
@@ -109,6 +113,9 @@ public class EventLogReader {
     private boolean isFileInDateRange(Path file, LocalDateTime startDate, LocalDateTime endDate) {
         String fileName = file.getFileName().toString();
         String datePart = fileName.substring(baseFileName.length() + 1);
+        if (fileName.endsWith(".gz")) {
+            fileName = fileName.substring(0, fileName.length() - 3);
+        }
 
         try {
             LocalDate fileDate = LocalDate.parse(datePart);
@@ -157,7 +164,7 @@ public class EventLogReader {
     private <T> void readEventsFromFileWithFilter(Path file, Class<T> eventType,
                                                    Predicate<JsonNode> filter,
                                                    List<T> events) throws IOException {
-        try (BufferedReader reader = Files.newBufferedReader(file)) {
+        try (BufferedReader reader = openReader(file)) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.isBlank()) continue;
@@ -175,6 +182,16 @@ public class EventLogReader {
         }
     }
 
+    private BufferedReader openReader(Path file) throws IOException {
+        InputStream is = Files.newInputStream(file);
+
+        if (file.getFileName().toString().endsWith(".gz")) {
+            is = new GZIPInputStream(is);
+        }
+
+        return new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+    }
+
     /**
      * Get available dates from rotated log files.
      */
@@ -182,14 +199,22 @@ public class EventLogReader {
         List<LocalDate> dates = new ArrayList<>();
 
         try (Stream<Path> paths = Files.list(logDirectory)) {
-            paths.filter(p -> p.getFileName().toString().startsWith(baseFileName + "."))
-                 .forEach(p -> {
-                     String fileName = p.getFileName().toString();
-                     String datePart = fileName.substring(baseFileName.length() + 1);
-                     try {
-                         dates.add(LocalDate.parse(datePart));
-                     } catch (Exception ignored) {}
-                 });
+            paths.filter(p -> {
+                    String name = p.getFileName().toString();
+                    return name.matches(baseFileName + "\\.\\d{4}-\\d{2}-\\d{2}(\\.gz)?");
+            }).forEach(p -> {
+                    String fileName = p.getFileName().toString();
+
+                    // Remove .gz if present
+                    if (fileName.endsWith(".gz")) {
+                        fileName = fileName.substring(0, fileName.length() - 3);
+                    }
+
+                    String datePart = fileName.substring(baseFileName.length() + 1);
+                    try {
+                        dates.add(LocalDate.parse(datePart));
+                    } catch (Exception ignored) {}
+                });
         } catch (IOException e) {
             // Return empty list on error
         }
