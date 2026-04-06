@@ -13,6 +13,17 @@ public class LoggingProperties {
     @NestedConfigurationProperty
     private LoggingFilterProperties filter = new LoggingFilterProperties();
 
+    @NestedConfigurationProperty
+    private ArchiveProperties archive = new ArchiveProperties();
+
+    public ArchiveProperties getArchive() {
+        return archive;
+    }
+    
+    public void setArchive(ArchiveProperties archive) {
+        this.archive = archive;
+    }
+
     public LoggingFilterProperties getFilter() {
         return filter;
     }
