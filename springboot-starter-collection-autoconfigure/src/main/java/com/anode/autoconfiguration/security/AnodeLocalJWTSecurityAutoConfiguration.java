@@ -81,16 +81,8 @@ public class AnodeLocalJWTSecurityAutoConfiguration {
                         .requestMatchers(allowedPatterns).permitAll()
                         .anyRequest().authenticated())
                 .cors(withDefaults())
-                .formLogin(form -> form
-                        .loginPage(anodeSecurityProperties.getLoginUrl())          // your custom page
-                        .loginProcessingUrl("/api/users/login") // POST endpoint
-                        .defaultSuccessUrl("/", true)
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .logoutUrl(anodeSecurityProperties.getPostLogoutUrl())
-                        .logoutSuccessUrl(anodeSecurityProperties.getLoginUrl())
-                )
+                .formLogin(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()));
 
