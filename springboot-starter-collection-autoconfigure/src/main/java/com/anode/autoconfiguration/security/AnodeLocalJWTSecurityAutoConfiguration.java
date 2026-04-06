@@ -89,7 +89,7 @@ public class AnodeLocalJWTSecurityAutoConfiguration {
                 )
                 .logout(logout -> logout
                         .logoutUrl(anodeSecurityProperties.getPostLogoutUrl())
-                        .logoutSuccessUrl(anodeSecurityProperties.getLoginUrl()+"?logout")
+                        .logoutSuccessUrl(anodeSecurityProperties.getLoginUrl())
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()));
