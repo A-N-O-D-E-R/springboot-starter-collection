@@ -1,10 +1,11 @@
 package com.anode.autoconfiguration.logging;
 
-import com.anode.autoconfiguration.logging.properties.LoggingProperties;
 import com.anode.logging.EventLoggingProperties;
 import com.anode.logging.EventMarkers;
 import com.anode.logging.service.ArchiveScheduler;
 import com.anode.logging.service.ArchiveService;
+
+import java.nio.file.Path;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -30,21 +31,21 @@ public class EventLoggingAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(
-        prefix = "logging.collection.archive",
+        prefix = "logging.event",
         name = "enabled",
         havingValue = "true",
         matchIfMissing = true
     )
-    public ArchiveService archiveService(LoggingProperties properties) {
+    public ArchiveService archiveService(EventLoggingProperties properties) {
         return new ArchiveService(
-                properties.getArchive().getLogDirectory(),
-                properties.getArchive().getArchiveAfterDays()
+                properties.getPath() != null ? Path.of(properties.getPath()) : Path.of("."),
+                properties.getArchiveAfterDays()
         );
     }
 
     @Configuration
     @ConditionalOnProperty(
-        prefix = "logging.collection.archive",
+        prefix = "logging.event",
         name = "scheduled",
         havingValue = "true",
         matchIfMissing = true
