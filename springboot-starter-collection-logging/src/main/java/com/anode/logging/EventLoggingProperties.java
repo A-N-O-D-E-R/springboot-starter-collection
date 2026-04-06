@@ -1,5 +1,6 @@
 package com.anode.logging;
 
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -25,6 +26,28 @@ public class EventLoggingProperties {
      * Defaults to 30 days.
      */
     private int retentionDays = 30;
+    private boolean enabled = true;
+    private int archiveAfterDays = 7;
+    private boolean scheduled = true;
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+    public int getArchiveAfterDays() {
+        return archiveAfterDays;
+    }   
+    public void setArchiveAfterDays(int archiveAfterDays) {
+        this.archiveAfterDays = archiveAfterDays;
+    }
+    public boolean isScheduled() {
+        return scheduled;
+    }
+    public void setScheduled(boolean scheduled) {
+        this.scheduled = scheduled;
+    }
 
     public String getPath() {
         return path;
