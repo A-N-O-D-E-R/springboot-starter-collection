@@ -35,6 +35,7 @@
 
     <properties>
         <java.version>25</java.version>
+        <spring-cloud.version>2025.1.1</spring-cloud.version>
     </properties>
 
     <scm>
@@ -46,6 +47,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>com.anode</groupId>
                 <artifactId>springboot-starter-collection-dependencies</artifactId>
