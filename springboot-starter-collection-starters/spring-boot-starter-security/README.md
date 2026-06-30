@@ -39,7 +39,9 @@ When `anode.security.env-local-jwt=true`, an `EnvironmentPostProcessor` runs ear
 | `anode.security.jwt.issuer` | `$JWT_ISSUER` | `anode-local` |
 | `anode.security.jwt.expiration` | `$JWT_EXPIRATION` | `3600` |
 
-The auto-configuration then wires a `JwtDecoder` (HMAC-SHA256) and a `SecurityFilterChain` that requires a valid Bearer token on all endpoints except `/actuator/**`.
+The auto-configuration then wires a `JwtDecoder`/`JwtEncoder` (HMAC-SHA256) and a `SecurityFilterChain` that requires a valid Bearer token on all endpoints except `/actuator/**`.
+
+Once a request authenticates with a valid Bearer token, the resulting `SecurityContext` is cached in the default in-memory `HttpSession` (via `HttpSessionSecurityContextRepository`, `sessionCreationPolicy(IF_REQUIRED)`) — the same in-memory, session-based persistence used by Okta mode's mock login. This means subsequent requests on the same session cookie are authenticated from the session without needing to resend the Bearer token.
 
 ### Configuration
 
