@@ -13,6 +13,24 @@ import org.springframework.core.env.MapPropertySource;
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * Environment post-processor that configures local JWT (JSON Web Token) authentication during Spring Boot startup.
+ * <p>
+ * This processor sets up JWT-based authentication with locally managed keys, without requiring an external
+ * identity provider. It is activated when the property {@code anode.security.env-local-jwt} is set to {@code true}.
+ * <p>
+ * Environment variables:
+ * <ul>
+ *   <li>{@code JWT_SECRET} - JWT signing secret (auto-generated UUID if not provided)</li>
+ *   <li>{@code JWT_ISSUER} - JWT issuer claim (defaults to "anode-local")</li>
+ *   <li>{@code JWT_EXPIRATION} - Token expiration time in seconds (defaults to 3600)</li>
+ * </ul>
+ * <p>
+ * The processor runs with order {@code LOWEST_PRECEDENCE - 11} to ensure proper configuration sequence.
+ *
+ * @see org.springframework.boot.EnvironmentPostProcessor
+ * @see org.springframework.core.Ordered
+ */
 public class AnodeLocalJWTEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
     private static final DeferredLog log = new DeferredLog();
@@ -24,7 +42,13 @@ public class AnodeLocalJWTEnvironmentPostProcessor implements EnvironmentPostPro
             @NonNull ConfigurableEnvironment environment,
             @Nullable SpringApplication application
     ) {
-
+        /**
+         * Checks if local JWT is enabled and processes the environment configuration if so.
+         * Replays deferred logging after application initialization.
+         *
+         * @param environment the configurable environment
+         * @param application the Spring application (may be null)
+         */
         boolean enabled = Binder.get(environment)
                 .bind(ENV_LOCAL_JWT_ENABLED, Boolean.class)
                 .orElse(false);
@@ -40,6 +64,13 @@ public class AnodeLocalJWTEnvironmentPostProcessor implements EnvironmentPostPro
         }
     }
 
+    /**
+     * Configures JWT properties for Spring Security.
+     * Initializes JWT signing secret, issuer, and expiration settings, with sensible defaults
+     * for development environments.
+     *
+     * @param environment the configurable environment to add properties to
+     */
     private void localJwtPostProcessor(ConfigurableEnvironment environment) {
 
         var secret = environment.getProperty("JWT_SECRET", UUID.randomUUID().toString().replace("-", ""));
@@ -48,10 +79,7 @@ public class AnodeLocalJWTEnvironmentPostProcessor implements EnvironmentPostPro
 
         var props = new HashMap<String, Object>();
 
-        // Resource server (JWT validation)
         props.put("spring.security.oauth2.resourceserver.jwt.secret", secret);
-
-        // Optional metadata (your app can use it)
         props.put("anode.security.jwt.issuer", issuer);
         props.put("anode.security.jwt.expiration", expiration);
 
@@ -62,6 +90,12 @@ public class AnodeLocalJWTEnvironmentPostProcessor implements EnvironmentPostPro
         log.info("Local JWT environment initialized");
     }
 
+    /**
+     * Returns the execution order of this post-processor.
+     * Executes at {@code LOWEST_PRECEDENCE - 11} to ensure proper ordering relative to other processors.
+     *
+     * @return the order value
+     */
     @Override
     public int getOrder() {
         return LOWEST_PRECEDENCE - 11;

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.anode</groupId>
+        <groupId>io.github.a-n-o-d-e-r</groupId>
         <artifactId>springboot-starter-collection</artifactId>
         <version>0.0.2-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
@@ -11,17 +11,18 @@
 
     <artifactId>spring-boot-starter-logging</artifactId>
     <packaging>jar</packaging>
+    <url>https://github.com/A-N-O-D-E-R/springboot-starter-collection</url>
 
     <name>Event Logging Spring Boot Starter</name>
     <description>Spring Boot starter for structured event logging with JSON serialization</description>
 
     <dependencies>
         <dependency>
-            <groupId>com.anode</groupId>
+            <groupId>io.github.a-n-o-d-e-r</groupId>
             <artifactId>springboot-starter-collection-logging</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.anode</groupId>
+            <groupId>io.github.a-n-o-d-e-r</groupId>
             <artifactId>springboot-starter-collection-autoconfigure</artifactId>
         </dependency>
     </dependencies>

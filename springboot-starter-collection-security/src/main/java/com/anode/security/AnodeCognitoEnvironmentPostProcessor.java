@@ -13,6 +13,32 @@ import org.springframework.core.env.MapPropertySource;
 
 import java.util.HashMap;
 
+/**
+ * Environment post-processor that configures AWS Cognito OAuth2 settings during Spring Boot startup.
+ * <p>
+ * This processor reads Cognito configuration from environment variables and automatically configures
+ * Spring Security's OAuth2 properties for Cognito-based authentication. It is activated when the
+ * property {@code anode.security.env-cognito} is set to {@code true}.
+ * <p>
+ * Required environment variables when enabled:
+ * <ul>
+ *   <li>{@code COGNITO_REGION} - AWS region (defaults to eu-west-3)</li>
+ *   <li>{@code COGNITO_POOL_ID} - Cognito User Pool ID</li>
+ *   <li>{@code COGNITO_CLIENT_ID} - OAuth2 client ID</li>
+ *   <li>{@code COGNITO_CLIENT_SECRET} - OAuth2 client secret</li>
+ * </ul>
+ * <p>
+ * Optional environment variables:
+ * <ul>
+ *   <li>{@code anode.security.post-logout-url} - Post-logout redirect URL (defaults to FRONTEND_URL or http://localhost:5173)</li>
+ * </ul>
+ * <p>
+ * The processor runs with order {@code LOWEST_PRECEDENCE - 9} to ensure it processes before
+ * other security configurations.
+ *
+ * @see org.springframework.boot.EnvironmentPostProcessor
+ * @see org.springframework.core.Ordered
+ */
 public class AnodeCognitoEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
     private static final DeferredLog log = new DeferredLog();
@@ -21,18 +47,30 @@ public class AnodeCognitoEnvironmentPostProcessor implements EnvironmentPostProc
 
     @Override
     public void postProcessEnvironment(@NonNull ConfigurableEnvironment environment, @Nullable SpringApplication application) {
-
+        /**
+         * Checks if Cognito is enabled and processes the environment configuration if so.
+         * Replays deferred logging after application initialization.
+         *
+         * @param environment the configurable environment
+         * @param application the Spring application (may be null)
+         */
         boolean cognitoEnabled = Binder.get(environment).bind(ENV_COGNITO_KEY, Boolean.class).orElse(false);
 
         if (cognitoEnabled) cognitoPostProcessor(environment);
 
         if (application != null) {
-            // This is required as EnvironmentPostProcessors are run before the logging system is initialized
             application.addInitializers(ctx -> log.replayTo(AnodeCognitoEnvironmentPostProcessor.class));
         }
 
     }
 
+    /**
+     * Configures OAuth2 properties for AWS Cognito.
+     * Reads Cognito credentials and settings from environment variables and adds them to the
+     * Spring property sources for automatic Spring Security OAuth2 configuration.
+     *
+     * @param environment the configurable environment to add properties to
+     */
     private void cognitoPostProcessor(ConfigurableEnvironment environment) {
         var region = environment.getProperty("COGNITO_REGION", "eu-west-3");
         var poolId = environment.getProperty("COGNITO_POOL_ID");
@@ -62,6 +100,12 @@ public class AnodeCognitoEnvironmentPostProcessor implements EnvironmentPostProc
         log.info("cognito env initialized");
     }
 
+    /**
+     * Returns the execution order of this post-processor.
+     * Executes at {@code LOWEST_PRECEDENCE - 9} to ensure proper ordering relative to other processors.
+     *
+     * @return the order value
+     */
     @Override
     public int getOrder() {
         return LOWEST_PRECEDENCE - 9;

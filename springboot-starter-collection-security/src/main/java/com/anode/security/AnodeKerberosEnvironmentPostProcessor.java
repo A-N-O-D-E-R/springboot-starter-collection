@@ -12,6 +12,31 @@ import org.springframework.core.env.MapPropertySource;
 
 import java.util.HashMap;
 
+/**
+ * Environment post-processor that configures Kerberos authentication settings during Spring Boot startup.
+ * <p>
+ * This processor reads Kerberos configuration from environment variables and automatically configures
+ * Spring Security's Kerberos properties. It is activated when the property {@code anode.security.env-kerberos}
+ * is set to {@code true}.
+ * <p>
+ * Required environment variables when enabled:
+ * <ul>
+ *   <li>{@code KERBEROS_SERVICE_PRINCIPAL} - Kerberos service principal (e.g., HTTP/hostname@REALM)</li>
+ *   <li>{@code KERBEROS_KEYTAB} - Path to the keytab file containing credentials</li>
+ * </ul>
+ * <p>
+ * Optional environment variables:
+ * <ul>
+ *   <li>{@code KERBEROS_LDAP_URL} - LDAP server URL for user lookup</li>
+ *   <li>{@code KERBEROS_LDAP_BASE} - LDAP search base DN</li>
+ *   <li>{@code KERBEROS_LDAP_FILTER} - LDAP search filter (defaults to {@code (userPrincipalName={0})})</li>
+ * </ul>
+ * <p>
+ * The processor runs with order {@code LOWEST_PRECEDENCE - 10} to ensure proper configuration sequence.
+ *
+ * @see org.springframework.boot.EnvironmentPostProcessor
+ * @see org.springframework.core.Ordered
+ */
 public class AnodeKerberosEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
     private static final DeferredLog log = new DeferredLog();
@@ -23,7 +48,13 @@ public class AnodeKerberosEnvironmentPostProcessor implements EnvironmentPostPro
             @NonNull ConfigurableEnvironment environment,
             @Nullable SpringApplication application
     ) {
-
+        /**
+         * Checks if Kerberos is enabled and processes the environment configuration if so.
+         * Replays deferred logging after application initialization.
+         *
+         * @param environment the configurable environment
+         * @param application the Spring application (may be null)
+         */
         boolean enabled = Binder.get(environment)
                 .bind(ENV_KERBEROS_ENABLED, Boolean.class)
                 .orElse(false);
@@ -39,6 +70,13 @@ public class AnodeKerberosEnvironmentPostProcessor implements EnvironmentPostPro
         }
     }
 
+    /**
+     * Configures Kerberos properties for Spring Security.
+     * Reads Kerberos credentials and optional LDAP settings from environment variables
+     * and adds them to the Spring property sources.
+     *
+     * @param environment the configurable environment to add properties to
+     */
     private void kerberosPostProcessor(ConfigurableEnvironment environment) {
 
         var principal = environment.getProperty("KERBEROS_SERVICE_PRINCIPAL");
@@ -79,6 +117,12 @@ public class AnodeKerberosEnvironmentPostProcessor implements EnvironmentPostPro
         log.info("Kerberos environment initialized");
     }
 
+    /**
+     * Returns the execution order of this post-processor.
+     * Executes at {@code LOWEST_PRECEDENCE - 10} to ensure proper ordering relative to other processors.
+     *
+     * @return the order value
+     */
     @Override
     public int getOrder() {
         return LOWEST_PRECEDENCE - 10;
