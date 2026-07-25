@@ -1,0 +1,1 @@
+org.springframework.boot.EnvironmentPostProcessor=com.anode.security.AnodeLocalJWTEnvironmentPostProcessor,com.anode.security.AnodeCognitoEnvironmentPostProcessor,com.anode.security.AnodeKerberosEnvironmentPostProcessor,com.anode.security.AnodeOktaEnvironmentPostProcessor
