@@ -11,7 +11,7 @@
 
     <groupId>io.github.a-n-o-d-e-r</groupId>
     <artifactId>springboot-starter-collection</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
     <packaging>pom</packaging>
     <name>Spring Parent</name>
     <description>Custom Spring Boot framework A-N-O-D-E6R</description>

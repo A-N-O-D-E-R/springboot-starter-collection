@@ -5,12 +5,14 @@
     <parent>
         <groupId>io.github.a-n-o-d-e-r</groupId>
         <artifactId>springboot-starter-collection</artifactId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.0.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>springboot-starter-collection-plugin</artifactId>
     <packaging>jar</packaging>
+    <name>Spring Boot Starter Collection Plugin</name>
+    <description>Plugin framework integration for Spring Boot starter collection</description>
     <url>https://github.com/A-N-O-D-E-R/springboot-starter-collection</url>
 
     <dependencies>
