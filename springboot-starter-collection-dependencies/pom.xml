@@ -35,13 +35,6 @@
     </distributionManagement>
 
     <build>
-        <extensions>
-            <extension>
-                <groupId>io.github.a-n-o-d-e-r.maven.wagon</groupId>
-                <artifactId>wagon-b2</artifactId>
-                <version>1.0.0</version>
-            </extension>
-        </extensions>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
