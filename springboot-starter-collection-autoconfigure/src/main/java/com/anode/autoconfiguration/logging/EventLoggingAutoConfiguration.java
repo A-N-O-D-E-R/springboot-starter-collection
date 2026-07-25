@@ -2,9 +2,19 @@ package com.anode.autoconfiguration.logging;
 
 import com.anode.logging.EventLoggingProperties;
 import com.anode.logging.EventMarkers;
+import com.anode.logging.service.ArchiveScheduler;
+import com.anode.logging.service.ArchiveService;
+
+import java.nio.file.Path;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Auto-configuration for structured event logging.
@@ -17,4 +27,37 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnClass(EventMarkers.class)
 @EnableConfigurationProperties(EventLoggingProperties.class)
 public class EventLoggingAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(
+        prefix = "logging.event",
+        name = "enabled",
+        havingValue = "true",
+        matchIfMissing = true
+    )
+    public ArchiveService archiveService(EventLoggingProperties properties) {
+        return new ArchiveService(
+                properties.getPath() != null ? Path.of(properties.getPath()) : Path.of("."),
+                properties.getArchiveAfterDays()
+        );
+    }
+
+    @Configuration
+    @ConditionalOnProperty(
+        prefix = "logging.event",
+        name = "scheduled",
+        havingValue = "true",
+        matchIfMissing = true
+    )
+    @EnableScheduling
+    static class SchedulingConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean
+        @ConditionalOnBean(ArchiveService.class)
+        public ArchiveScheduler archiveScheduler(ArchiveService service) {
+            return new ArchiveScheduler(service);
+        }
+    }
 }

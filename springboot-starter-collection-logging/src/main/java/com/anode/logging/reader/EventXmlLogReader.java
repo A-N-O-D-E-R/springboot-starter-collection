@@ -2,6 +2,9 @@ package com.anode.logging.reader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -14,6 +17,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Reads events from XML log files (one XML element per line).
@@ -82,6 +86,9 @@ public class EventXmlLogReader {
     private boolean isFileInDateRange(Path file, LocalDateTime startDate, LocalDateTime endDate) {
         String fileName = file.getFileName().toString();
         String datePart = fileName.substring(baseFileName.length() + 1);
+        if (fileName.endsWith(".gz")) {
+            fileName = fileName.substring(0, fileName.length() - 3);
+        }
 
         try {
             LocalDate fileDate = LocalDate.parse(datePart);
@@ -97,7 +104,7 @@ public class EventXmlLogReader {
                                          Function<Map<String, String>, T> factory,
                                          LocalDateTime startDate, LocalDateTime endDate,
                                          List<T> events) throws IOException {
-        try (BufferedReader reader = Files.newBufferedReader(file)) {
+        try (BufferedReader reader = openReader(file)) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.isBlank()) continue;
@@ -132,6 +139,16 @@ public class EventXmlLogReader {
         }
     }
 
+    private BufferedReader openReader(Path file) throws IOException {
+        InputStream is = Files.newInputStream(file);
+
+        if (file.getFileName().toString().endsWith(".gz")) {
+            is = new GZIPInputStream(is);
+        }
+
+        return new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+    }
+
     private Map<String, String> parseAttributes(String attributes) {
         Map<String, String> map = new HashMap<>();
         Matcher attrMatcher = ATTR_PATTERN.matcher(attributes);
@@ -159,9 +176,14 @@ public class EventXmlLogReader {
         List<LocalDate> dates = new ArrayList<>();
 
         try (Stream<Path> paths = Files.list(logDirectory)) {
-            paths.filter(p -> p.getFileName().toString().startsWith(baseFileName + "."))
-                 .forEach(p -> {
-                     String fileName = p.getFileName().toString();
+            paths.filter(p -> {
+                    String name = p.getFileName().toString();
+                    return name.matches(baseFileName + "\\.\\d{4}-\\d{2}-\\d{2}(\\.gz)?");
+            }).forEach(p -> {
+                    String fileName = p.getFileName().toString();
+                    if (fileName.endsWith(".gz")) {
+                        fileName = fileName.substring(0, fileName.length() - 3);
+                    }
                      String datePart = fileName.substring(baseFileName.length() + 1);
                      try {
                          dates.add(LocalDate.parse(datePart));

@@ -9,11 +9,35 @@
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.anode</groupId>
+    <groupId>io.github.a-n-o-d-e-r</groupId>
     <artifactId>springboot-starter-collection</artifactId>
     <version>0.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <name>Spring Parent</name>
+    <description>Custom Spring Boot framework A-N-O-D-E6R</description>
+    <url>https://github.com/A-N-O-D-E-R/springboot-starter-collection</url>
 
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>A-N-O-D-E-R</id>
+            <name>A-N-O-D-E-R</name>
+            <url>https://github.com/A-N-O-D-E-R</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/A-N-O-D-E-R/SiLA2-simple-lib.git</connection>
+        <developerConnection>scm:git:ssh://github.com/A-N-O-D-E-R/SiLA2-simple-lib.git</developerConnection>
+        <url>https://github.com/A-N-O-D-E-R/Sila2-Spring</url>
+        <tag>HEAD</tag>
+    </scm>
     <modules>
         <module>springboot-starter-collection-autoconfigure</module>
         <module>springboot-starter-collection-dependencies</module>
@@ -23,16 +47,19 @@
         <module>springboot-starter-collection-jdbc</module>
         <module>springboot-starter-collection-redis</module>
         <module>springboot-starter-collection-logging</module>
+        <module>springboot-starter-collection-security</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-b2</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-plugin</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-jdbc</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-redis</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-modbus</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-logging</module>
+        <module>springboot-starter-collection-starters/spring-boot-starter-security</module>
     </modules>
 
     <properties>
         <java.version>25</java.version>
+        <spring-cloud.version>2025.1.1</spring-cloud.version>
     </properties>
 
     <scm>
@@ -45,7 +72,14 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.anode</groupId>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
                 <artifactId>springboot-starter-collection-dependencies</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
@@ -53,19 +87,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <distributionManagement>
-        <repository>
-            <id>b2-releases</id>
-            <name>B2 Releases Repository</name>
-            <url>b2://A-N-O-D-E-R/maven-releases</url>
-        </repository>
-
-        <snapshotRepository>
-            <id>b2-snapshots</id>
-            <name>B2 Snapshots Repository</name>
-            <url>b2://A-N-O-D-E-R/maven-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <build>
         <plugins>
@@ -109,7 +130,7 @@
         </plugins>
         <extensions>
             <extension>
-                <groupId>com.anode.maven.wagon</groupId>
+                <groupId>io.github.a-n-o-d-e-r.maven.wagon</groupId>
                 <artifactId>wagon-b2</artifactId>
                 <version>1.0.0</version>
             </extension>
@@ -127,5 +148,68 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <profiles>
+        <!-- Maven Central release profile -->
+        <profile>
+            <id>central</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals><goal>jar-no-fork</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
 
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.6.3</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals><goal>jar</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.4</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals><goal>sign</goal></goals>
+                                <configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.11.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                            <waitUntil>published</waitUntil>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
