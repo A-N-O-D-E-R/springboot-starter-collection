@@ -4,9 +4,33 @@
 
     <groupId>io.github.a-n-o-d-e-r</groupId>
     <artifactId>springboot-starter-collection-dependencies</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
     <packaging>pom</packaging>
+    <name>Spring Boot Starter Collection Dependencies</name>
+    <description>Dependency management for Spring Boot starter collection</description>
     <url>https://github.com/A-N-O-D-E-R/springboot-starter-collection</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>A-N-O-D-E-R</id>
+            <name>A-N-O-D-E-R</name>
+            <url>https://github.com/A-N-O-D-E-R</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/A-N-O-D-E-R/springboot-starter-collection.git</connection>
+        <developerConnection>scm:git:ssh://github.com/A-N-O-D-E-R/springboot-starter-collection.git</developerConnection>
+        <url>https://github.com/A-N-O-D-E-R/springboot-starter-collection</url>
+        <tag>HEAD</tag>
+    </scm>
     
     <properties>
         <b2-sdk.version>6.2.1</b2-sdk.version>
