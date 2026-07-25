@@ -62,13 +62,6 @@
         <spring-cloud.version>2025.1.1</spring-cloud.version>
     </properties>
 
-    <scm>
-        <connection>scm:git:git://github.com/A-N-O-D-E-R/springboot-starter-collection.git</connection>
-        <developerConnection>scm:git:git@github.com:A-N-O-D-E-R/springboot-starter-collection.git</developerConnection>
-        <url>https://github.com/A-N-O-D-E-R/springboot-starter-collection</url>
-        <tag>HEAD</tag>
-    </scm>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
