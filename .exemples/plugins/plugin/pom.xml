@@ -9,6 +9,7 @@
     <artifactId>greeting-plugin</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
+    <url>https://github.com/A-N-O-D-E-R/springboot-starter-collection</url>
 
     <name>Greeting Plugin</name>
     <description>Example plugin that provides greeting extensions</description>

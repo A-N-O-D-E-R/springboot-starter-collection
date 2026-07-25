@@ -2,10 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.anode</groupId>
+    <groupId>io.github.a-n-o-d-e-r</groupId>
     <artifactId>springboot-starter-collection-dependencies</artifactId>
     <version>0.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <url>https://github.com/A-N-O-D-E-R/springboot-starter-collection</url>
     
     <properties>
         <b2-sdk.version>6.2.1</b2-sdk.version>
@@ -36,7 +37,7 @@
     <build>
         <extensions>
             <extension>
-                <groupId>com.anode.maven.wagon</groupId>
+                <groupId>io.github.a-n-o-d-e-r.maven.wagon</groupId>
                 <artifactId>wagon-b2</artifactId>
                 <version>1.0.0</version>
             </extension>
@@ -58,58 +59,58 @@
         <dependencies>
             <!-- Internal modules -->
             <dependency>
-                <groupId>com.anode</groupId>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
                 <artifactId>springboot-starter-collection-autoconfigure</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.anode</groupId>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
                 <artifactId>springboot-starter-collection-logging</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.anode</groupId>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
                 <artifactId>spring-boot-starter-logging</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.anode</groupId>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
                 <artifactId>springboot-starter-collection-b2</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.anode</groupId>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
                 <artifactId>spring-boot-starter-b2</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.anode</groupId>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
                 <artifactId>springboot-starter-collection-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.anode</groupId>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
                 <artifactId>spring-boot-starter-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.anode</groupId>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
                 <artifactId>springboot-starter-collection-modbus</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.anode</groupId>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
                 <artifactId>spring-boot-starter-modbus</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.anode</groupId>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
                 <artifactId>springboot-starter-collection-security</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.anode</groupId>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
                 <artifactId>spring-boot-starter-security</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -135,12 +136,12 @@
                 <version>${pf4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.anode</groupId>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
                 <artifactId>springboot-starter-collection-jdbc</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.anode</groupId>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
                 <artifactId>spring-boot-starter-jdbc</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -150,12 +151,12 @@
                 <version>${aws-advanced-jdbc-wrapper.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.anode</groupId>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
                 <artifactId>springboot-starter-collection-redis</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.anode</groupId>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
                 <artifactId>spring-boot-starter-redis</artifactId>
                 <version>${project.version}</version>
             </dependency>

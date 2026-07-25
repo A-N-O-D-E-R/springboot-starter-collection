@@ -16,6 +16,7 @@
     <artifactId>b2-demo-app</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <url>https://github.com/A-N-O-D-E-R/springboot-starter-collection</url>
 
     <name>B2 Demo Application</name>
     <description>Example Spring Boot application using Backblaze B2 Spring Boot Starter</description>
@@ -36,7 +37,7 @@
 
         <!-- B2 Spring Boot Starter -->
         <dependency>
-            <groupId>com.anode</groupId>
+            <groupId>io.github.a-n-o-d-e-r</groupId>
             <artifactId>spring-boot-starter-b2</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
