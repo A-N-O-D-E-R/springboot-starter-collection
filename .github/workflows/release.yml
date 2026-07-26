@@ -30,7 +30,9 @@ jobs:
         run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
 
       - name: Set release version in parent and all modules
-        run: mvn versions:set -DnewVersion=${{ steps.version.outputs.VERSION }} -DgenerateBackupPoms=false -DprocessAllModules
+        run: |
+          mvn versions:set -DnewVersion=${{ steps.version.outputs.VERSION }} -DgenerateBackupPoms=false -DprocessAllModules
+          find .exemples -name "pom.xml" -exec mvn versions:set -DnewVersion=${{ steps.version.outputs.VERSION }} -DgenerateBackupPoms=false -f {} \;
 
       - name: Build and deploy to Maven Central
         run: mvn --batch-mode clean deploy -P central -DskipTests
