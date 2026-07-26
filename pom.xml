@@ -14,7 +14,7 @@
     <version>0.0.2</version>
     <packaging>pom</packaging>
     <name>Spring Parent</name>
-    <description>Custom Spring Boot framework A-N-O-D-E6R</description>
+    <description>Custom Spring Boot framework A-N-O-D-E-R</description>
     <url>https://github.com/A-N-O-D-E-R/springboot-starter-collection</url>
 
     <licenses>
@@ -59,7 +59,7 @@
 
     <properties>
         <java.version>25</java.version>
-        <spring-cloud.version>2025.1.1</spring-cloud.version>
+        <spring-cloud.version>2025.1.2</spring-cloud.version>
     </properties>
 
     <dependencyManagement>
