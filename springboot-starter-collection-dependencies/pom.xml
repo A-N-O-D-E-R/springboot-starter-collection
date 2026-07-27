@@ -4,7 +4,7 @@
 
     <groupId>io.github.a-n-o-d-e-r</groupId>
     <artifactId>springboot-starter-collection-dependencies</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
     <packaging>pom</packaging>
     <name>Spring Boot Starter Collection Dependencies</name>
     <description>Dependency management for Spring Boot starter collection</description>
@@ -35,13 +35,15 @@
     <properties>
         <b2-sdk.version>6.2.1</b2-sdk.version>
         <spring-security-kerberos.version>2.1.0</spring-security-kerberos.version>
-        <pf4j.version>3.10.0</pf4j.version>
+        <pf4j.version>3.14.1</pf4j.version>
         <aws-advanced-jdbc-wrapper.version>2.6.0</aws-advanced-jdbc-wrapper.version>
         <io.awspring.cloud.version>3.4.0</io.awspring.cloud.version>
         <kryo.version>5.6.2</kryo.version>
         <okta.version>3.1.0</okta.version>
         <modbus.version>3.1.0</modbus.version>
         <snappy.version>1.1.10.7</snappy.version>
+        <jackson.version>2.18.8</jackson.version>
+        <netty.version>4.2.15.Final</netty.version>
     </properties>
 
     <dependencyManagement>
@@ -195,6 +197,32 @@
                 <groupId>org.springframework.modulith</groupId>
                 <artifactId>spring-modulith-events-aws-sqs</artifactId>
                 <version>1.4.0</version>
+            </dependency>
+            <!-- Security vulnerability fixes -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-dns</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-resolver-dns</artifactId>
+                <version>${netty.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
