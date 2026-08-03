@@ -7,3 +7,4 @@ com.anode.autoconfiguration.security.AnodeOktaSecurityAutoconfiguration
 com.anode.autoconfiguration.security.AnodeCognitoSecurityAutoConfiguration
 com.anode.autoconfiguration.security.AnodeKerberosSecurityAutoConfiguration
 com.anode.autoconfiguration.security.AnodeLocalJWTSecurityAutoConfiguration
+com.anode.autoconfiguration.biojava.BioJavaAutoConfiguration

@@ -42,6 +42,15 @@
             <artifactId>springboot-starter-collection-security</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.github.a-n-o-d-e-r</groupId>
+            <artifactId>springboot-starter-collection-biojava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>

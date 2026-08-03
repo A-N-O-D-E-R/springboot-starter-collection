@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.a-n-o-d-e-r</groupId>
+        <artifactId>springboot-starter-collection</artifactId>
+        <version>0.0.3</version>
+    </parent>
+
+    <artifactId>springboot-starter-collection-biojava</artifactId>
+
+    <name>Spring Boot Starter Collection - BioJava</name>
+    <description>Spring Boot auto-configuration for BioJava</description>
+
+    <properties>
+        <biojava.version>7.1.4</biojava.version>
+        <aws-sdk.version>2.29.29</aws-sdk.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.biojava</groupId>
+            <artifactId>biojava-core</artifactId>
+            <version>${biojava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.biojava</groupId>
+            <artifactId>biojava-alignment</artifactId>
+            <version>${biojava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.biojava</groupId>
+            <artifactId>biojava-structure</artifactId>
+            <version>${biojava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.biojava</groupId>
+            <artifactId>biojava-genome</artifactId>
+            <version>${biojava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.biojava</groupId>
+            <artifactId>biojava-modfinder</artifactId>
+            <version>${biojava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.biojava</groupId>
+            <artifactId>biojava-protein-disorder</artifactId>
+            <version>${biojava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>${aws-sdk.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+</project>

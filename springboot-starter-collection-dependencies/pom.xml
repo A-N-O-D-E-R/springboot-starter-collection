@@ -44,6 +44,8 @@
         <snappy.version>1.1.10.7</snappy.version>
         <jackson.version>2.18.8</jackson.version>
         <netty.version>4.2.15.Final</netty.version>
+        <biojava.version>7.1.4</biojava.version>
+        <aws-sdk.version>2.29.29</aws-sdk.version>
     </properties>
 
     <dependencyManagement>
@@ -223,6 +225,51 @@
                 <groupId>io.netty</groupId>
                 <artifactId>netty-resolver-dns</artifactId>
                 <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
+                <artifactId>springboot-starter-collection-biojava</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
+                <artifactId>spring-boot-starter-biojava</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.biojava</groupId>
+                <artifactId>biojava-core</artifactId>
+                <version>${biojava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.biojava</groupId>
+                <artifactId>biojava-alignment</artifactId>
+                <version>${biojava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.biojava</groupId>
+                <artifactId>biojava-structure</artifactId>
+                <version>${biojava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.biojava</groupId>
+                <artifactId>biojava-genome</artifactId>
+                <version>${biojava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.biojava</groupId>
+                <artifactId>biojava-modfinder</artifactId>
+                <version>${biojava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.biojava</groupId>
+                <artifactId>biojava-protein-disorder</artifactId>
+                <version>${biojava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>s3</artifactId>
+                <version>${aws-sdk.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

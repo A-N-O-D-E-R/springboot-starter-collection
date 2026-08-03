@@ -1,0 +1,5 @@
+biojava:
+  cache:
+    path: ${java.io.tmpdir}/biojava-test-cache
+  structure:
+    auto-fetch: true
