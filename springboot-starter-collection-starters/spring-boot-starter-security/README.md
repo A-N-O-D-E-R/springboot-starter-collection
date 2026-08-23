@@ -1,6 +1,8 @@
 # Security Spring Boot Starter
 
-Spring Boot starter for auto-configuring application security with support for OAuth2/OIDC (Okta, Cognito), Kerberos/SPNEGO, and local JWT authentication.
+Spring Boot starter for auto-configuring application security with support for OAuth2/OIDC (Okta, Cognito), local self-issued JWT, and Kerberos/SPNEGO authentication.
+
+A single `SecurityFilterChain` is built. JWT-bearing requests (Okta/Cognito/local) are routed to the right `AuthenticationManager` by issuer via a `JwtIssuerAuthenticationManagerResolver` — each provider, including the local one, is just a trusted entry in that map, so any combination of them can be enabled together. Kerberos runs alongside as an independent SPNEGO filter/provider; both paths deposit a standard Spring Security `Authentication` in the `SecurityContext`.
 
 ## Usage
 
@@ -14,14 +16,15 @@ Spring Boot starter for auto-configuring application security with support for O
 
 ## Authentication Modes
 
-Activate exactly one mode via configuration:
+Enable any combination via configuration (each becomes a trusted issuer on the same filter chain):
 
 | Mode | Property |
 |------|----------|
 | Okta OAuth2/OIDC | `anode.security.env-okta=true` |
 | AWS Cognito OAuth2 | `anode.security.env-cognito=true` |
-| Kerberos/SPNEGO | `anode.security.env-kerberos=true` |
 | Local JWT (dev) | `anode.security.env-local-jwt=true` |
+| Mock (form login, dev) | `anode.security.mock=true` |
+| Kerberos/SPNEGO | `anode.security.env-kerberos=true` |
 
 ---
 
@@ -39,9 +42,7 @@ When `anode.security.env-local-jwt=true`, an `EnvironmentPostProcessor` runs ear
 | `anode.security.jwt.issuer` | `$JWT_ISSUER` | `anode-local` |
 | `anode.security.jwt.expiration` | `$JWT_EXPIRATION` | `3600` |
 
-The auto-configuration then wires a `JwtDecoder`/`JwtEncoder` (HMAC-SHA256) and a `SecurityFilterChain` that requires a valid Bearer token on all endpoints except `/actuator/**`.
-
-Once a request authenticates with a valid Bearer token, the resulting `SecurityContext` is cached in the default in-memory `HttpSession` (via `HttpSessionSecurityContextRepository`, `sessionCreationPolicy(IF_REQUIRED)`) — the same in-memory, session-based persistence used by Okta mode's mock login. This means subsequent requests on the same session cookie are authenticated from the session without needing to resend the Bearer token.
+The auto-configuration then wires a `JwtDecoder`/`JwtEncoder` (HMAC-SHA256) and registers `anode.security.jwt.issuer` as a trusted issuer on the shared `JwtIssuerAuthenticationManagerResolver` — same mechanism as Okta/Cognito, just with this app acting as its own issuer. The decoder rejects any token whose `iss` claim doesn't match, so tokens you mint with `JwtEncoder` must set `.issuer(...)` to that value.
 
 ### Configuration
 
@@ -58,9 +59,10 @@ JWT_EXPIRATION=7200
 ### Generating a test token
 
 ```java
-// Using jjwt or nimbus-jose-jwt in a test
+// Using jjwt or nimbus-jose-jwt in a test — must include the issuer claim
 String token = Jwts.builder()
     .subject("test-user")
+    .issuer("anode-local") // must match anode.security.jwt.issuer
     .issuedAt(new Date())
     .expiration(Date.from(Instant.now().plusSeconds(3600)))
     .signWith(Keys.hmacShaKeyFor("dev-secret-key".getBytes(StandardCharsets.UTF_8)))
@@ -93,4 +95,42 @@ public Customizer<HttpSecurity> mySecurityCustomizer() {
 
 ### Do not use in production
 
-Local JWT mode uses a symmetric shared secret with no key rotation, token revocation, or issuer validation. Use Okta, Cognito, or another OIDC provider for production deployments.
+Local JWT mode uses a symmetric shared secret with no key rotation or token revocation. Use Okta, Cognito, or another OIDC provider for production deployments.
+
+---
+
+## Kerberos/SPNEGO (`anode.security.env-kerberos`)
+
+Intranet SSO via a Kerberos ticket. Runs on the same `SecurityFilterChain` as any other enabled mode — it doesn't replace Okta/Cognito/mock, it complements them.
+
+### How it works
+
+A `SpnegoAuthenticationProcessingFilter` is inserted before Spring's basic-auth filter; a `KerberosServiceAuthenticationProvider` validates the ticket against your keytab and loads the principal via a `UserDetailsService` (override the `UserDetailsService` bean to source roles from LDAP or elsewhere — the default just grants `ROLE_USER`).
+
+If Kerberos is the only mode enabled, unauthenticated requests get a `WWW-Authenticate: Negotiate` challenge unconditionally. If it's combined with Okta, Cognito, or mock, Spring Security's own content-negotiation split decides which challenge applies: browser navigations (`Accept: text/html`) fall through to the OIDC/mock login page, everything else (SPNEGO-capable service clients, plain API calls) gets the Negotiate challenge. No custom routing code needed — this is the same `defaultAuthenticationEntryPointFor` mechanism Spring Security uses internally to combine formLogin with httpBasic.
+
+Either path — Kerberos ticket or OIDC token — ends up as a standard `Authentication` in the `SecurityContext`; downstream code (`@PreAuthorize`, `Authentication` injection, etc.) doesn't need to know which one was used.
+
+### Configuration
+
+```properties
+anode.security.env-kerberos=true
+
+# Required
+KERBEROS_SERVICE_PRINCIPAL=HTTP/myapp.example.com@EXAMPLE.COM
+KERBEROS_KEYTAB=/etc/krb5/myapp.keytab
+
+# Optional — LDAP-backed UserDetailsService lookup
+KERBEROS_LDAP_URL=ldap://ldap.example.com:389
+KERBEROS_LDAP_BASE=dc=example,dc=com
+KERBEROS_LDAP_FILTER=(userPrincipalName={0})
+```
+
+### Combining with OIDC
+
+```properties
+anode.security.env-kerberos=true
+anode.security.env-okta=true
+```
+
+Desktop clients on the intranet authenticate transparently via Kerberos; everyone else gets redirected to Okta's login page.

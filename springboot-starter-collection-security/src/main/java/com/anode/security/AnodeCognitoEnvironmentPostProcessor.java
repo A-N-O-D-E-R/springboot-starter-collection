@@ -87,14 +87,14 @@ public class AnodeCognitoEnvironmentPostProcessor implements EnvironmentPostProc
                 "${POST_LOGOUT_URL:${FRONTEND_URL:http://localhost:5173}}");
 
         var cognitoProperties = new HashMap<String, Object>();
-            cognitoProperties.put("spring.security.oauth2.registration.coginto.client-id", clientId);
-            cognitoProperties.put("spring.security.oauth2.registration.coginto.client-secret", clientSecret);
-            cognitoProperties.put("spring.security.oauth2.registration.coginto.scope", "openid,profile,offline_access");
-            cognitoProperties.put("spring.security.oauth2.registration.coginto.authorization-grant-type", "authorization_code");
-            cognitoProperties.put("spring.security.oauth2.registration.coginto.post-logout-url", postLogoutUrl);
-            cognitoProperties.put("spring.security.oauth2.client.provider.coginto.issuer-uri", issuer);
-            cognitoProperties.put("spring.security.oauth2.client.provider.coginto.user-name-attribute", "sub");
-            cognitoProperties.put("spring.security.oauth2.client.provider.coginto.jwk-set-uri", issuer + "/.well-known/jwks.json");
+            cognitoProperties.put("spring.security.oauth2.client.registration.cognito.client-id", clientId);
+            cognitoProperties.put("spring.security.oauth2.client.registration.cognito.client-secret", clientSecret);
+            cognitoProperties.put("spring.security.oauth2.client.registration.cognito.scope", "openid,profile,offline_access");
+            cognitoProperties.put("spring.security.oauth2.client.registration.cognito.authorization-grant-type", "authorization_code");
+            cognitoProperties.put("spring.security.oauth2.client.registration.cognito.post-logout-url", postLogoutUrl);
+            cognitoProperties.put("spring.security.oauth2.client.provider.cognito.issuer-uri", issuer);
+            cognitoProperties.put("spring.security.oauth2.client.provider.cognito.user-name-attribute", "sub");
+            cognitoProperties.put("spring.security.oauth2.client.provider.cognito.jwk-set-uri", issuer + "/.well-known/jwks.json");
             
         environment.getPropertySources().addAfter("oktaProperties", new MapPropertySource("cognitoProperties", cognitoProperties));
         log.info("cognito env initialized");
