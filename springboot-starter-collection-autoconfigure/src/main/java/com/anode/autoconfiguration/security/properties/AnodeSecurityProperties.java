@@ -13,6 +13,7 @@ import static com.anode.autoconfiguration.security.properties.AnodeSecurityPrope
 public class AnodeSecurityProperties {
     public static final String CONFIG_PREFIX = "anode.security";
 
+    private boolean enabled = true;
     private boolean envLocalJwt = false;
     private boolean envOkta = false;
     private boolean envKerberos = false;
@@ -23,6 +24,14 @@ public class AnodeSecurityProperties {
     @Value("${LOGIN_URL:${FRONTEND_URL:/login}}")
     private String loginUrl;
     private List<String> allowedPatterns = new ArrayList<>();
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     public boolean isEnvLocalJwt() {
         return envLocalJwt;
