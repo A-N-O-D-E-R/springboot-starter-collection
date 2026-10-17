@@ -45,6 +45,7 @@
         <github-api.version>1.330</github-api.version>
         <jjwt.version>0.12.6</jjwt.version>
         <gitlab4j-api.version>6.3.0</gitlab4j-api.version>
+        <notion-sdk-jvm.version>1.11.1</notion-sdk-jvm.version>
     </properties>
 
     <dependencyManagement>
@@ -70,7 +71,22 @@
                 <artifactId>spring-boot-starter-gitlab</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
+                <artifactId>spring-boot-starter-notion</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!-- Third-party clients of the integration starters -->
+            <dependency>
+                <groupId>com.github.seratch</groupId>
+                <artifactId>notion-sdk-jvm-core</artifactId>
+                <version>${notion-sdk-jvm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.seratch</groupId>
+                <artifactId>notion-sdk-jvm-slf4j2</artifactId>
+                <version>${notion-sdk-jvm.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.gitlab4j</groupId>
                 <artifactId>gitlab4j-api</artifactId>

@@ -57,6 +57,16 @@
             <optional>true</optional>
         </dependency>
         <dependency>
+            <groupId>com.github.seratch</groupId>
+            <artifactId>notion-sdk-jvm-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.github.seratch</groupId>
+            <artifactId>notion-sdk-jvm-slf4j2</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
