@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.a-n-o-d-e-r</groupId>
+        <artifactId>springboot-starter-collection</artifactId>
+        <version>0.0.3</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>spring-boot-starter-github</artifactId>
+    <packaging>jar</packaging>
+    <name>GitHub Spring Boot Starter</name>
+    <description>GitHub App clients per repository, scoped installation tokens and verified webhooks</description>
+    <url>https://github.com/A-N-O-D-E-R/springboot-starter-collection</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.a-n-o-d-e-r</groupId>
+            <artifactId>springboot-starter-collection-github</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.a-n-o-d-e-r</groupId>
+            <artifactId>springboot-starter-collection-autoconfigure</artifactId>
+        </dependency>
+    </dependencies>
+</project>
