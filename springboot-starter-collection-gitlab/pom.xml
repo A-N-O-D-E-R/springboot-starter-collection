@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.a-n-o-d-e-r</groupId>
+        <artifactId>springboot-starter-collection</artifactId>
+        <version>0.0.3</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>springboot-starter-collection-gitlab</artifactId>
+    <packaging>jar</packaging>
+    <name>Spring Boot Starter Collection GitLab</name>
+    <description>GitLab client (gitlab4j) and verified webhook events</description>
+    <url>https://github.com/A-N-O-D-E-R/springboot-starter-collection</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.gitlab4j</groupId>
+            <artifactId>gitlab4j-api</artifactId>
+        </dependency>
+    </dependencies>
+</project>
