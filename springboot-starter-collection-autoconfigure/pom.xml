@@ -57,6 +57,11 @@
             <optional>true</optional>
         </dependency>
         <dependency>
+            <groupId>io.github.a-n-o-d-e-r</groupId>
+            <artifactId>springboot-starter-collection-jira</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>com.github.seratch</groupId>
             <artifactId>notion-sdk-jvm-core</artifactId>
             <optional>true</optional>

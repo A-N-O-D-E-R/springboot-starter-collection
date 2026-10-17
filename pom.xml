@@ -44,6 +44,7 @@
         <module>springboot-starter-collection-security</module>
         <module>springboot-starter-collection-github</module>
         <module>springboot-starter-collection-gitlab</module>
+        <module>springboot-starter-collection-jira</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-b2</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-plugin</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-jdbc</module>
@@ -54,6 +55,7 @@
         <module>springboot-starter-collection-starters/spring-boot-starter-github</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-gitlab</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-notion</module>
+        <module>springboot-starter-collection-starters/spring-boot-starter-jira</module>
     </modules>
 
     <properties>

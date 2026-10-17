@@ -76,6 +76,16 @@
                 <artifactId>spring-boot-starter-notion</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
+                <artifactId>springboot-starter-collection-jira</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
+                <artifactId>spring-boot-starter-jira</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!-- Third-party clients of the integration starters -->
             <dependency>
                 <groupId>com.github.seratch</groupId>
