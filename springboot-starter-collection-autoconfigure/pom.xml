@@ -24,22 +24,27 @@
         <dependency>
             <groupId>io.github.a-n-o-d-e-r</groupId>
             <artifactId>springboot-starter-collection-b2</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.github.a-n-o-d-e-r</groupId>
             <artifactId>springboot-starter-collection-plugin</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.github.a-n-o-d-e-r</groupId>
             <artifactId>springboot-starter-collection-redis</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.github.a-n-o-d-e-r</groupId>
             <artifactId>springboot-starter-collection-modbus</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.github.a-n-o-d-e-r</groupId>
             <artifactId>springboot-starter-collection-security</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
