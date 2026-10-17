@@ -54,6 +54,12 @@ class AnodeSecurityAutoConfigurationTest {
         /** An application-provided validator: here, worker "w-revoked" has been revoked. */
         @TestConfiguration
         static class RevokedWorkers {
+            /** And an application URL rule: creating things is for workers only. */
+            @Bean
+            com.anode.security.AuthorizationRules workersOnly() {
+                return rules -> rules.requestMatchers(org.springframework.http.HttpMethod.POST, "/things").hasRole("WORKER");
+            }
+
             @Bean
             OAuth2TokenValidator<Jwt> notRevoked() {
                 return jwt -> "w-revoked".equals(jwt.getSubject())
@@ -85,6 +91,12 @@ class AnodeSecurityAutoConfigurationTest {
         void aBearerRequestNeedsNoCsrfToken() throws Exception {
             mvc.perform(post("/things").header("Authorization", "Bearer " + token(ISSUER, "w-1", List.of("workers"))))
                     .andExpect(status().isOk());
+        }
+
+        @Test
+        void applicationUrlRulesApplyBeforeTheRequestIsHandled() throws Exception {
+            mvc.perform(post("/things").header("Authorization", "Bearer " + token(ISSUER, "u-1", List.of("people"))))
+                    .andExpect(status().isForbidden());
         }
 
         @Test

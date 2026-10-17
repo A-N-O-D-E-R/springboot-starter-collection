@@ -1,6 +1,7 @@
 package com.anode.autoconfiguration.security;
 
 import com.anode.autoconfiguration.security.properties.AnodeSecurityProperties;
+import com.anode.security.AuthorizationRules;
 import com.anode.security.oidc.AnodeClaimsToRoleMapper;
 import com.anode.security.oidc.AnodeGrantedAuthoritiesMapper;
 import com.anode.security.oidc.ClaimsToRoleMapper;
@@ -106,6 +107,7 @@ public class AnodeSecurityAutoConfiguration {
     public SecurityFilterChain configure(HttpSecurity http, AnodeSecurityProperties anodeSecurityProperties,
                                           ClaimsToRoleMapper claimsToRoleMapper,
                                           List<Customizer<HttpSecurity>> httpSecurityCustomizers,
+                                          List<AuthorizationRules> authorizationRules,
                                           Optional<ClientRegistrationRepository> clientRegistrationRepository,
                                           Optional<AuthenticationManagerResolver<HttpServletRequest>> authenticationManagerResolver,
                                           Optional<SpnegoAuthenticationProcessingFilter> spnegoFilter,
@@ -117,9 +119,11 @@ public class AnodeSecurityAutoConfiguration {
                 .toArray(String[]::new);
 
         http.securityMatcher("/**")
-                .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(allowedPatterns).permitAll()
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(requests -> {
+                    requests.requestMatchers(allowedPatterns).permitAll();
+                    authorizationRules.forEach(rules -> rules.configure(requests));
+                    requests.anyRequest().authenticated();
+                })
                 .cors(withDefaults());
 
         if (anodeSecurityProperties.isSessionLogin()) {
