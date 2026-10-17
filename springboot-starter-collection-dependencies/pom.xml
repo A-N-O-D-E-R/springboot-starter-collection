@@ -37,7 +37,7 @@
         <spring-security-kerberos.version>2.1.0</spring-security-kerberos.version>
         <pf4j.version>3.14.1</pf4j.version>
         <aws-advanced-jdbc-wrapper.version>2.6.0</aws-advanced-jdbc-wrapper.version>
-        <io.awspring.cloud.version>3.4.0</io.awspring.cloud.version>
+        <io.awspring.cloud.version>4.2.0</io.awspring.cloud.version>
         <kryo.version>5.6.2</kryo.version>
         <okta.version>3.1.0</okta.version>
         <modbus.version>3.1.0</modbus.version>
@@ -260,16 +260,6 @@
                 <version>${io.awspring.cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.modulith</groupId>
-                <artifactId>spring-modulith-events-aws-sns</artifactId>
-                <version>1.4.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.modulith</groupId>
-                <artifactId>spring-modulith-events-aws-sqs</artifactId>
-                <version>1.4.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
