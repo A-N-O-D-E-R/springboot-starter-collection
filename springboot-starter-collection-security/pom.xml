@@ -14,10 +14,6 @@
     <name>Spring Boot Starter Collection Security</name>
     <description>Security integration for Spring Boot starter collection</description>
     <url>https://github.com/A-N-O-D-E-R/springboot-starter-collection</url>
-    <properties>
-        <jjwt.version>0.11.5</jjwt.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
