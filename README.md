@@ -1,516 +1,91 @@
 # Spring Boot Starters Collection
 
-A collection of custom Spring Boot starters for seamless integration with various services and frameworks.
+Spring Boot 4.1 starters (Java 25) under `io.github.a-n-o-d-e-r`. Each starter brings its feature
+module and the shared auto-configuration; every feature can be switched off with
+`<prefix>.enabled=false` and every bean can be replaced by declaring your own.
 
-## Overview
+Import the BOM to align versions:
 
-This repository contains multiple Spring Boot starters that simplify the integration of external services into your Spring Boot applications through auto-configuration.
-
-## Available Starters
-
-### 1. JDBC Spring Boot Starter
-
-**Location**: `springboot-starter-collection-starters/spring-boot-starter-jdbc/`
-
-A Spring Boot starter for JDBC with AWS Advanced JDBC Wrapper support for enhanced database connectivity.
-
-**Features**:
-- AWS Advanced JDBC Wrapper with failover support
-- PostgreSQL driver included
-- Environment-based configuration via `JDBC_WRAPPER_SHARED_URL`
-- Utility functions for PostgreSQL database operations
-- Spring Boot 3.4.2 compatible
-- Java 21 support
-
-**Quick Start**:
 ```xml
 <dependency>
-    <groupId>com.anode</groupId>
-    <artifactId>spring-boot-starter-jdbc</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <groupId>io.github.a-n-o-d-e-r</groupId>
+    <artifactId>springboot-starter-collection-dependencies</artifactId>
+    <version>0.1.0</version>
+    <type>pom</type>
+    <scope>import</scope>
 </dependency>
 ```
 
-```bash
-export JDBC_WRAPPER_SHARED_URL="jdbc:aws-wrapper:postgresql://my-cluster.us-east-1.rds.amazonaws.com:5432/mydb"
-```
+| Starter | What it configures |
+|---|---|
+| `spring-boot-starter-security` | One security filter chain: OIDC login (Okta, Cognito, any provider), self-issued JWTs, mock login, Kerberos; roles from groups; CSRF for sessions |
+| `spring-boot-starter-github` | GitHub App clients per repository, scoped installation tokens, verified webhooks |
+| `spring-boot-starter-gitlab` | gitlab4j `GitLabApi`, verified webhooks |
+| `spring-boot-starter-jira` | Jira Cloud client generated from Atlassian's OpenAPI spec (issues, JQL, comments, transitions) |
+| `spring-boot-starter-notion` | notion-sdk-jvm `NotionClient` |
+| `spring-boot-starter-logging` | Business-event logging (markers, JSON/XML encoders, archive) |
+| `spring-boot-starter-jdbc` | AWS Advanced JDBC Wrapper from `JDBC_WRAPPER_SHARED_URL` |
+| `spring-boot-starter-redis` | Redis with AWS IAM credentials, two-level cache |
+| `spring-boot-starter-b2` | Backblaze B2 client |
+| `spring-boot-starter-plugin` | PF4J plugin manager |
+| `spring-boot-starter-modbus` | Modbus master |
 
-[View Full Documentation](springboot-starter-collection-starters/spring-boot-starter-jdbc/README.md)
+Secrets are read from the environment only (`ANODE_GITHUB_PRIVATE_KEY`, `ANODE_JIRA_API_TOKEN`...,
+through Spring's relaxed binding); none is ever logged.
 
-### 2. PF4J Spring Boot Starter
+## Security — `anode.security.*`
 
-**Location**: `plugin-springboot-starter/`
+Exactly one mode family must be enabled; nothing is configured otherwise.
 
-A Spring Boot starter for [PF4J](https://pf4j.org/) (Plugin Framework for Java) that enables plugin-based architecture in your Spring Boot applications.
+| Property | Meaning |
+|---|---|
+| `env-oidc` | Any OpenID Connect provider (Pocket ID, Keycloak...) configured through `spring.security.oauth2.client.registration.<oidc.registration-id>` / `provider.*`; its bearer tokens are also accepted when the provider has an `issuer-uri` |
+| `env-okta`, `env-cognito` | Okta / Cognito login (environment post-processors read `OKTA_*`, Cognito variables) |
+| `env-local-jwt` | Bearer JWTs signed by the application (HS256, `spring.security.oauth2.resourceserver.jwt.secret`, issuer `anode.security.jwt.issuer`); a `JwtEncoder` bean is provided to issue them, and every `OAuth2TokenValidator<Jwt>` bean is applied (e.g. revocation) |
+| `mock` | Form login accepting any user, claims from `classpath:anode-test-users/<user>.json` — local development only |
+| `env-kerberos` | SPNEGO |
+| `roles.claim` / `roles.mapping.<ROLE>` | Roles granted from the groups claim, e.g. `roles.mapping.ROLE_ADMIN=factory-admins`; without mapping the historical `role`/`Title` claim mapping applies |
+| `allowed-patterns` | Paths open without authentication (`/actuator/**` always is) |
 
-**Features**:
-- Auto-configuration of PF4J PluginManager
-- Automatic plugin loading and starting at application startup
-- Configurable plugin directory
-- Enable/disable plugin system via configuration
-- Spring Boot 3.4.2 compatible
-- Java 21 support
+Browser logins (OIDC, Okta, Cognito, mock) are session-based and protected against CSRF with the
+SPA setup (`XSRF-TOKEN` cookie echoed as `X-XSRF-TOKEN`); requests carrying a bearer token are
+exempt.
 
-**Quick Start**:
-```xml
-<dependency>
-    <groupId>com.anode</groupId>
-    <artifactId>spring-boot-starter-plugin</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-</dependency>
-```
+## GitHub — `anode.github.*`
 
-```properties
-plugins.enabled=true
-plugins.pluginsRootFolder=plugins
-```
+| Property | Default | Meaning |
+|---|---|---|
+| `app-id`, `private-key` | — | GitHub App id and private key (PKCS#8 PEM: `openssl pkcs8 -topk8 -nocrypt -in key.pem`) |
+| `api-url` | `https://api.github.com` | `https://HOST/api/v3` for GitHub Enterprise Server |
+| `webhook.secret` | — | Enables the webhook endpoint, verifying `X-Hub-Signature-256` |
+| `webhook.path` | `/webhooks/github` | Endpoint path (add it to `anode.security.allowed-patterns`) |
 
-[View Full Documentation](plugin-springboot-starter/README.md)
+`GitHubApp.forRepository(owner, repo)` returns a github-api client acting as the installation;
+`repositoryToken(owner, repo, permissions)` mints a token limited to that repository (e.g. for git
+over HTTPS). Deliveries are published as `GitHubWebhookEvent` (use `deliveryId` for idempotence).
 
-### 3. Backblaze B2 Spring Boot Starter
+## GitLab — `anode.gitlab.*`
 
-**Location**: `b2-springboot-starter/`
+`url` (default `https://gitlab.com`), `token`, `webhook.secret`, `webhook.path`
+(`/webhooks/gitlab`). Deliveries whose `X-Gitlab-Token` matches are parsed by gitlab4j and
+published as `GitLabWebhookEvent`.
 
-A Spring Boot starter for [Backblaze B2](https://www.backblaze.com/b2/cloud-storage.html) cloud storage integration.
+## Jira — `anode.jira.*`
 
-**Features**:
-- Auto-configuration of Backblaze B2 client
-- Simple service layer for file operations (upload, download, delete)
-- Configurable timeouts and retry logic
-- Support for multiple buckets
-- Spring Boot 3.4.2 compatible
-- Java 21 support
+`base-url` (`https://your-domain.atlassian.net`), `email`, `api-token`, `retry.max-retries` (3),
+`retry.delay` (1s), `retry.max-delay` (10s). `JiraClient` exposes the generated `IssuesApi`,
+`IssueSearchApi`, `IssueCommentsApi` and `MyselfApi`; `JiraDocuments.text(...)` builds comment
+bodies. The operations are generated from `springboot-starter-collection-jira/src/main/openapi`;
+run `filter-spec.py` against Atlassian's spec to add one.
 
-**Quick Start**:
-```xml
-<dependency>
-    <groupId>com.anode</groupId>
-    <artifactId>spring-boot-starter-b2</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-</dependency>
-```
+## Notion — `anode.notion.*`
 
-```properties
-b2.applicationKeyId=your_key_id
-b2.applicationKey=your_secret_key
-b2.defaultBucketName=my-bucket
-```
+`token`, `base-url` (`https://api.notion.com/v1`).
 
-[View Full Documentation](b2-springboot-starter/README.md)
-
-## Examples
-
-Working example applications are available in the `.exemples/` directory:
-
-### PF4J Plugin Example
-
-**Location**: `.exemples/app/` and `.exemples/plugin/`
-
-A complete example demonstrating:
-- Spring Boot REST API with plugin support
-- Extension point pattern implementation
-- Multi-language greeting plugin with 3 implementations (English, French, Spanish)
-- Plugin discovery and loading
-- One-command setup and run
-
-[View Example Documentation](.exemples/README.md)
-
-### B2 Cloud Storage Example
-
-**Location**: `.exemples/b2/`
-
-A REST API demonstrating:
-- File upload to B2 cloud storage
-- File download from B2
-- File deletion
-- Multi-bucket support
-- Complete demo workflow
-
-[View Example Documentation](.exemples/b2/README.md)
-
-## Quick Start Guide
-
-See [QUICKSTART.md](QUICKSTART.md) for a 5-minute guide to get started with the PF4J starter.
-
-## Project Structure
-
-This project follows the Spring Boot multi-module pattern:
-
-```
-.
-├── pom.xml                                          # Root parent POM
-│
-├── springboot-starter-collection-dependencies/      # Dependency management
-│   └── pom.xml
-│
-├── springboot-starter-collection-autoconfigure/     # Auto-configuration
-│   ├── src/main/java/com/anode/autoconfiguration/
-│   │   ├── b2/B2AutoConfiguration.java
-│   │   └── plugin/PluginAutoConfiguration.java
-│   └── pom.xml
-│
-├── springboot-starter-collection-b2/                # B2 core module
-│   ├── src/main/java/com/anode/b2/
-│   │   ├── B2Properties.java
-│   │   └── B2Service.java
-│   └── pom.xml
-│
-├── springboot-starter-collection-plugin/            # Plugin core module
-│   ├── src/main/java/com/anode/plugin/
-│   │   └── PluginsProperties.java
-│   └── pom.xml
-│
-├── springboot-starter-collection-jdbc/              # JDBC core module
-│   ├── src/main/java/com/anode/jdbc/
-│   │   ├── JdbcEnvironmentPostProcessor.java
-│   │   └── JdbcUtils.java
-│   └── pom.xml
-│
-├── springboot-starter-collection-starters/          # Starter modules
-│   ├── spring-boot-starter-b2/
-│   │   ├── pom.xml
-│   │   └── README.md
-│   ├── spring-boot-starter-plugin/
-│   │   ├── pom.xml
-│   │   └── README.md
-│   └── spring-boot-starter-jdbc/
-│       ├── pom.xml
-│       └── README.md
-│
-├── b2-springboot-starter/                           # [Legacy - to be removed]
-├── plugin-springboot-starter/                       # [Legacy - to be removed]
-│
-├── .exemples/                                       # Example applications
-│   ├── app/                                         # PF4J demo application
-│   ├── plugin/                                      # Example plugin
-│   ├── b2/                                          # B2 demo application
-│   └── README.md
-│
-├── QUICKSTART.md                                    # Quick start guide
-└── README.md                                        # This file
-```
-
-### Module Structure
-
-The project follows a layered architecture:
-
-1. **Dependencies Module** (`springboot-starter-collection-dependencies`): Centralized dependency version management
-2. **Core Modules** (`springboot-starter-collection-b2`, `springboot-starter-collection-plugin`, `springboot-starter-collection-jdbc`): Business logic and properties
-3. **Autoconfigure Module** (`springboot-starter-collection-autoconfigure`): Spring Boot auto-configuration
-4. **Starter Modules** (`spring-boot-starter-*`): User-facing starters that combine core + autoconfigure
-
-## Requirements
-
-- **Java**: 21 or higher
-- **Spring Boot**: 3.4.2 or higher
-- **Maven**: 3.6+
-
-## Installation
-
-### Install All Starters
-
-From the root directory:
+## Build
 
 ```bash
-mvn clean install
+mvn verify      # JDK 25
 ```
 
-This will build and install all modules in the correct order:
-1. Dependencies module
-2. Core modules (B2, Plugin)
-3. Autoconfigure module
-4. Starter modules
-
-### Install Specific Starter
-
-```bash
-# B2 only
-cd springboot-starter-collection-starters/spring-boot-starter-b2
-mvn clean install
-
-# Plugin only
-cd springboot-starter-collection-starters/spring-boot-starter-plugin
-mvn clean install
-```
-
-## Usage Examples
-
-### Using PF4J Starter
-
-```java
-import org.pf4j.PluginManager;
-import org.springframework.stereotype.Service;
-
-@Service
-public class MyService {
-    private final PluginManager pluginManager;
-
-    public MyService(PluginManager pluginManager) {
-        this.pluginManager = pluginManager;
-    }
-
-    public void usePlugins() {
-        List<MyExtension> extensions =
-            pluginManager.getExtensions(MyExtension.class);
-        extensions.forEach(MyExtension::doSomething);
-    }
-}
-```
-
-### Using B2 Starter
-
-```java
-import com.anode.b2.B2Service;
-import org.springframework.stereotype.Service;
-
-@Service
-public class FileService {
-    private final B2Service b2Service;
-
-    public FileService(B2Service b2Service) {
-        this.b2Service = b2Service;
-    }
-
-    public void uploadFile() throws Exception {
-        Path file = Paths.get("example.txt");
-        b2Service.uploadFile(file, "remote-file.txt");
-    }
-}
-```
-
-## Running Examples
-
-### PF4J Plugin Example
-
-```bash
-cd .exemples
-./build-and-run.sh
-```
-
-Then test:
-```bash
-curl "http://localhost:8080/api/greet?name=John"
-```
-
-### B2 Cloud Storage Example
-
-```bash
-cd .exemples/b2
-# Configure your B2 credentials in application.properties
-mvn spring-boot:run
-```
-
-Then test:
-```bash
-curl -X POST "http://localhost:8081/api/files/demo"
-```
-
-## Testing
-
-Each starter includes comprehensive tests:
-
-### PF4J Starter Tests
-```bash
-cd plugin-springboot-starter
-mvn test
-```
-**Results**: 16 tests - All passing ✓
-
-### B2 Starter Tests
-```bash
-cd b2-springboot-starter
-mvn test
-```
-**Results**: 13 tests - All passing ✓
-
-## Configuration Reference
-
-### PF4J Starter Configuration
-
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `plugins.enabled` | boolean | `true` | Enable/disable plugin system |
-| `plugins.pluginsRootFolder` | String | `"plugins"` | Root folder for plugins |
-
-### B2 Starter Configuration
-
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `b2.enabled` | boolean | `true` | Enable/disable B2 integration |
-| `b2.applicationKeyId` | String | `null` | B2 Application Key ID (required) |
-| `b2.applicationKey` | String | `null` | B2 Application Key (required) |
-| `b2.defaultBucketName` | String | `null` | Default bucket for operations |
-| `b2.connectionTimeoutSeconds` | int | `30` | Connection timeout |
-| `b2.socketTimeoutSeconds` | int | `60` | Socket timeout |
-| `b2.maxRetries` | int | `3` | Maximum retry attempts |
-| `b2.userAgent` | String | `spring-boot-starter-b2/0.0.1` | User agent string |
-
-## Architecture
-
-### Auto-Configuration Pattern
-
-All starters follow Spring Boot's auto-configuration pattern:
-
-1. **Properties Class**: `@ConfigurationProperties` for external configuration
-2. **Auto-Configuration Class**: `@Configuration` with conditional bean creation
-3. **Service Layer**: High-level service beans for common operations
-4. **META-INF Registration**: Auto-configuration registered in `AutoConfiguration.imports`
-
-### Example Auto-Configuration Flow
-
-```
-Application Startup
-    ↓
-Spring Boot detects AutoConfiguration.imports
-    ↓
-Conditional checks (@ConditionalOnProperty, @ConditionalOnClass)
-    ↓
-Beans created (Client, Service, etc.)
-    ↓
-Ready for injection into your components
-```
-
-## Development
-
-### Project Standards
-
-- **Java Version**: 21
-- **Spring Boot Version**: 3.4.2
-- **Code Style**: Standard Java conventions
-- **Testing**: JUnit 5 with Spring Boot Test
-- **Documentation**: Comprehensive README for each module
-
-### Adding a New Starter
-
-1. Create a new module directory
-2. Add `pom.xml` with dependencies
-3. Create configuration properties class
-4. Create auto-configuration class
-5. Create service layer
-6. Add `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`
-7. Write tests
-8. Document in README.md
-
-## Troubleshooting
-
-### PF4J Issues
-
-**Problem**: Plugins not loading
-
-**Solutions**:
-1. Check `plugins.enabled=true`
-2. Verify plugin directory exists
-3. Check application logs
-4. Ensure plugin manifest is correct
-
-### B2 Issues
-
-**Problem**: Authentication errors
-
-**Solutions**:
-1. Verify credentials are correct
-2. Check application key hasn't expired
-3. Ensure key has bucket permissions
-
-See individual starter READMEs for more troubleshooting tips.
-
-## Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new functionality
-4. Update documentation
-5. Submit a pull request
-
-## Security Best Practices
-
-### For PF4J
-- Review plugin code before loading
-- Use plugin versioning
-- Implement plugin sandboxing if needed
-- Monitor plugin behavior
-
-### For B2
-- Never commit credentials to version control
-- Use environment variables for production
-- Use application keys with minimal permissions
-- Rotate keys regularly
-- Use private buckets for sensitive data
-
-## License
-
-This project is licensed under the terms specified in the repository.
-
-## Resources
-
-### PF4J Resources
-- [PF4J Documentation](https://pf4j.org/)
-- [Spring Boot Auto-Configuration](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.developing-auto-configuration)
-
-### B2 Resources
-- [Backblaze B2 Documentation](https://www.backblaze.com/b2/docs/)
-- [B2 Java SDK](https://github.com/Backblaze/b2-sdk-java)
-
-### Spring Boot Resources
-- [Spring Boot Documentation](https://spring.io/projects/spring-boot)
-- [Creating Your Own Auto-Configuration](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.developing-auto-configuration)
-
-## Support
-
-For issues:
-- **PF4J Starter**: See [plugin-springboot-starter/README.md](plugin-springboot-starter/README.md)
-- **B2 Starter**: See [b2-springboot-starter/README.md](b2-springboot-starter/README.md)
-- **General**: Open an issue in this repository
-
-## Changelog
-
-### Version 0.0.1-SNAPSHOT
-
-**PF4J Spring Boot Starter**:
-- Initial release
-- Auto-configuration support
-- Basic plugin management
-- 16 passing tests
-
-**B2 Spring Boot Starter**:
-- Initial release
-- Auto-configuration support
-- File upload/download/delete operations
-- Multi-bucket support
-- 13 passing tests
-
-## Roadmap
-
-### Planned Features
-
-**PF4J Starter**:
-- [ ] Plugin hot-reload support
-- [ ] Plugin dependency management
-- [ ] Enhanced security features
-- [ ] Plugin metrics and monitoring
-
-**B2 Starter**:
-- [ ] Large file upload support (>5GB)
-- [ ] File streaming support
-- [ ] Bucket management operations
-- [ ] File listing with pagination
-- [ ] CDN integration
-
-**General**:
-- [ ] Spring Boot 3.5+ compatibility
-- [ ] Reactive programming support
-- [ ] Cloud-native features (health checks, metrics)
-- [ ] Additional starters for other services
-
-## Acknowledgments
-
-- Spring Boot team for the excellent framework
-- PF4J team for the plugin framework
-- Backblaze for B2 cloud storage and SDK
-- Contributors and users of these starters
-
----
-
-**Happy Coding!** 🚀
+Releases: tag `v<version>`; GitHub Actions signs and publishes to Maven Central.
