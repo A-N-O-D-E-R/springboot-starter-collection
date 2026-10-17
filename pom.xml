@@ -54,6 +54,7 @@
         <module>springboot-starter-collection-starters/spring-boot-starter-security</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-github</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-gitlab</module>
+        <module>springboot-starter-collection-starters/spring-boot-starter-notion</module>
     </modules>
     <properties>
         <java.version>25</java.version>
