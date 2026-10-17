@@ -5,3 +5,4 @@ com.anode.autoconfiguration.modbus.ModbusAutoConfiguration
 com.anode.autoconfiguration.logging.EventLoggingAutoConfiguration
 com.anode.autoconfiguration.security.AnodeSecurityAutoConfiguration
 com.anode.autoconfiguration.github.GitHubAutoConfiguration
+com.anode.autoconfiguration.gitlab.GitLabAutoConfiguration

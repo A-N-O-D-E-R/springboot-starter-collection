@@ -43,6 +43,7 @@
         <module>springboot-starter-collection-logging</module>
         <module>springboot-starter-collection-security</module>
         <module>springboot-starter-collection-github</module>
+        <module>springboot-starter-collection-gitlab</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-b2</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-plugin</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-jdbc</module>
@@ -51,6 +52,7 @@
         <module>springboot-starter-collection-starters/spring-boot-starter-logging</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-security</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-github</module>
+        <module>springboot-starter-collection-starters/spring-boot-starter-gitlab</module>
     </modules>
 
     <properties>

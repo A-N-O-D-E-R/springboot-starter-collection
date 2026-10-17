@@ -44,6 +44,7 @@
         <snappy.version>1.1.10.7</snappy.version>
         <github-api.version>1.330</github-api.version>
         <jjwt.version>0.12.6</jjwt.version>
+        <gitlab4j-api.version>6.3.0</gitlab4j-api.version>
     </properties>
 
     <dependencyManagement>
@@ -59,7 +60,22 @@
                 <artifactId>spring-boot-starter-github</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
+                <artifactId>springboot-starter-collection-gitlab</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.a-n-o-d-e-r</groupId>
+                <artifactId>spring-boot-starter-gitlab</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!-- Third-party clients of the integration starters -->
+            <dependency>
+                <groupId>org.gitlab4j</groupId>
+                <artifactId>gitlab4j-api</artifactId>
+                <version>${gitlab4j-api.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.kohsuke</groupId>
                 <artifactId>github-api</artifactId>
