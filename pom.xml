@@ -5,13 +5,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.6</version>
+        <version>4.1.0</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>io.github.a-n-o-d-e-r</groupId>
     <artifactId>springboot-starter-collection</artifactId>
-    <version>0.0.3</version>
+    <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Spring Parent</name>
     <description>Custom Spring Boot framework A-N-O-D-E-R</description>
@@ -43,6 +43,9 @@
         <module>springboot-starter-collection-logging</module>
         <module>springboot-starter-collection-security</module>
         <module>springboot-starter-collection-zabbix</module>
+        <module>springboot-starter-collection-github</module>
+        <module>springboot-starter-collection-gitlab</module>
+        <module>springboot-starter-collection-jira</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-b2</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-plugin</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-jdbc</module>
@@ -50,6 +53,10 @@
         <module>springboot-starter-collection-starters/spring-boot-starter-modbus</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-logging</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-security</module>
+        <module>springboot-starter-collection-starters/spring-boot-starter-github</module>
+        <module>springboot-starter-collection-starters/spring-boot-starter-gitlab</module>
+        <module>springboot-starter-collection-starters/spring-boot-starter-notion</module>
+        <module>springboot-starter-collection-starters/spring-boot-starter-jira</module>
     </modules>
     <properties>
         <java.version>25</java.version>

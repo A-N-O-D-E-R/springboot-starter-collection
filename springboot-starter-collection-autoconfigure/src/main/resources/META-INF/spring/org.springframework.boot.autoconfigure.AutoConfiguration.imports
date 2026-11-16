@@ -5,3 +5,7 @@ com.anode.autoconfiguration.modbus.ModbusAutoConfiguration
 com.anode.autoconfiguration.logging.EventLoggingAutoConfiguration
 com.anode.autoconfiguration.security.AnodeSecurityAutoConfiguration
 com.anode.autoconfiguration.zabbix.ZabbixAutoConfiguration
+com.anode.autoconfiguration.github.GitHubAutoConfiguration
+com.anode.autoconfiguration.gitlab.GitLabAutoConfiguration
+com.anode.autoconfiguration.notion.NotionAutoConfiguration
+com.anode.autoconfiguration.jira.JiraAutoConfiguration

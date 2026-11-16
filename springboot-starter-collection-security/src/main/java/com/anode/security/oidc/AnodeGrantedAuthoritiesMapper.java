@@ -41,7 +41,8 @@ public class AnodeGrantedAuthoritiesMapper implements GrantedAuthoritiesMapper {
         HashSet<GrantedAuthority> mapped = new HashSet<>(authorities.size() + 1);
         for (GrantedAuthority authority : authorities) {
             if (authority instanceof OidcUserAuthority oidcUserAuthority) {
-                var claims = oidcUserAuthority.getUserInfo().getClaims();
+                // id token and user info claims merged (user info may be absent)
+                var claims = oidcUserAuthority.getAttributes();
                 var roles = claimsToRoleMapper.map(claims);
                 roles.forEach(role -> mapped.add(new SimpleGrantedAuthority(role)));
             }
