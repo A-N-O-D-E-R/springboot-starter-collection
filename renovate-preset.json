@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "A-N-O-D-E-R baseline. Use: \"extends\": [\"github>A-N-O-D-E-R/springboot-starter-collection:renovate-preset\"]",
+  "extends": ["config:recommended"],
+  "rangeStrategy": "pin",
+  "packageRules": [
+    { "matchManagers": ["npm"], "matchUpdateTypes": ["minor", "patch"], "groupName": "npm minor and patch" },
+    { "matchManagers": ["maven"], "matchUpdateTypes": ["minor", "patch"], "groupName": "maven minor and patch" },
+    {
+      "description": "One TypeScript version across the apps: bump it on its own, never inside a group.",
+      "matchPackageNames": ["typescript", "@typescript/native-preview"],
+      "groupName": null,
+      "groupSlug": "typescript",
+      "separateMajorMinor": true
+    },
+    {
+      "description": "Spring Boot parent moves with the collection BOM: review them together.",
+      "matchPackageNames": ["org.springframework.boot:spring-boot-starter-parent", "io.github.a-n-o-d-e-r:**"],
+      "groupName": "spring boot and starter collection",
+      "enabled": true
+    }
+  ]
+}
