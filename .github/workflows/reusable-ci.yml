@@ -22,6 +22,10 @@ on:
         description: Arguments of the Maven build (Docker is available for Testcontainers).
         type: string
         default: 'verify'
+      maven-pre-command:
+        description: "Shell command run before Maven, e.g. to build a Docker image the integration tests use. Empty: none."
+        type: string
+        default: ''
       maven-dir:
         description: "Directory of the root pom.xml. Empty: no backend job."
         type: string
@@ -56,6 +60,11 @@ jobs:
           java-version: ${{ inputs.java-version }}
           distribution: temurin
           cache: maven
+      - name: Before Maven
+        if: inputs.maven-pre-command != ''
+        run: bash -ec "$PRE_COMMAND"
+        env:
+          PRE_COMMAND: ${{ inputs.maven-pre-command }}
       - run: mvn --batch-mode --no-transfer-progress ${{ inputs.maven-args }}
         working-directory: ${{ inputs.maven-dir }}
 
