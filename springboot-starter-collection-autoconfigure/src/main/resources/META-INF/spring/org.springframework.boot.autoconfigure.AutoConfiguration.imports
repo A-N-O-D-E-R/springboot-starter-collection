@@ -9,3 +9,4 @@ com.anode.autoconfiguration.github.GitHubAutoConfiguration
 com.anode.autoconfiguration.gitlab.GitLabAutoConfiguration
 com.anode.autoconfiguration.notion.NotionAutoConfiguration
 com.anode.autoconfiguration.jira.JiraAutoConfiguration
+com.anode.autoconfiguration.confluence.ConfluenceAutoConfiguration
