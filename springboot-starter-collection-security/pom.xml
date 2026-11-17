@@ -28,10 +28,6 @@
             <artifactId>spring-boot-security-oauth2-resource-server</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.okta.spring</groupId>
-            <artifactId>okta-spring-security-oauth2</artifactId>
-        </dependency>
-        <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>

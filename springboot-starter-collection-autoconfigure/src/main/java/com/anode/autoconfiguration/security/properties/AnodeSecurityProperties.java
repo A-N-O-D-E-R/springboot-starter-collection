@@ -17,7 +17,6 @@ public class AnodeSecurityProperties {
 
     private boolean enabled = true;
     private boolean envLocalJwt = false;
-    private boolean envOkta = false;
     private boolean envKerberos = false;
     private boolean envCognito = false;
     /** Any OpenID Connect provider configured through {@code spring.security.oauth2.client.*}. */
@@ -95,7 +94,7 @@ public class AnodeSecurityProperties {
 
     /** Whether users log in through the browser and then hold a session cookie. */
     public boolean isSessionLogin() {
-        return mock || envOkta || envCognito || envOidc;
+        return mock || envCognito || envOidc;
     }
 
     public boolean isMockFormLogin() {
@@ -120,14 +119,6 @@ public class AnodeSecurityProperties {
 
     public void setEnvLocalJwt(boolean envLocalJwt) {
         this.envLocalJwt = envLocalJwt;
-    }
-
-    public boolean isEnvOkta() {
-        return envOkta;
-    }
-
-    public void setEnvOkta(boolean envOkta) {
-        this.envOkta = envOkta;
     }
 
     public boolean isEnvKerberos() {

@@ -96,7 +96,7 @@ public class AnodeCognitoEnvironmentPostProcessor implements EnvironmentPostProc
             cognitoProperties.put("spring.security.oauth2.client.provider.cognito.user-name-attribute", "sub");
             cognitoProperties.put("spring.security.oauth2.client.provider.cognito.jwk-set-uri", issuer + "/.well-known/jwks.json");
             
-        environment.getPropertySources().addAfter("oktaProperties", new MapPropertySource("cognitoProperties", cognitoProperties));
+        environment.getPropertySources().addLast(new MapPropertySource("cognitoProperties", cognitoProperties));
         log.info("cognito env initialized");
     }
 

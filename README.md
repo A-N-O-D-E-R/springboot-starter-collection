@@ -18,7 +18,7 @@ Import the BOM to align versions:
 
 | Starter | What it configures |
 |---|---|
-| `spring-boot-starter-security` | One security filter chain: OIDC login (Okta, Cognito, any provider), self-issued JWTs, mock login, Kerberos; roles from groups; CSRF for sessions |
+| `spring-boot-starter-security` | One security filter chain: OIDC login (Cognito, any provider), self-issued JWTs, mock login, Kerberos; roles from groups; CSRF for sessions |
 | `spring-boot-starter-github` | GitHub App clients per repository, scoped installation tokens, verified webhooks |
 | `spring-boot-starter-gitlab` | gitlab4j `GitLabApi`, verified webhooks |
 | `spring-boot-starter-jira` | Jira Cloud client generated from Atlassian's OpenAPI spec (issues, JQL, comments, transitions) |
@@ -40,14 +40,14 @@ Exactly one mode family must be enabled; nothing is configured otherwise.
 | Property | Meaning |
 |---|---|
 | `env-oidc` | Any OpenID Connect provider (Pocket ID, Keycloak...) configured through `spring.security.oauth2.client.registration.<oidc.registration-id>` / `provider.*`; its bearer tokens are also accepted when the provider has an `issuer-uri` |
-| `env-okta`, `env-cognito` | Okta / Cognito login (environment post-processors read `OKTA_*`, Cognito variables) |
+| `env-cognito` | Cognito login (an environment post-processor reads the Cognito variables) |
 | `env-local-jwt` | Bearer JWTs signed by the application (HS256, `spring.security.oauth2.resourceserver.jwt.secret`, issuer `anode.security.jwt.issuer`); a `JwtEncoder` bean is provided to issue them, and every `OAuth2TokenValidator<Jwt>` bean is applied (e.g. revocation) |
 | `mock` | Form login accepting any user, claims from `classpath:anode-test-users/<user>.json` — local development only |
 | `env-kerberos` | SPNEGO |
 | `roles.claim` / `roles.mapping.<ROLE>` | Roles granted from the groups claim, e.g. `roles.mapping.ROLE_ADMIN=factory-admins`; without mapping the historical `role`/`Title` claim mapping applies |
 | `allowed-patterns` | Paths open without authentication (`/actuator/**` always is) |
 
-Browser logins (OIDC, Okta, Cognito, mock) are session-based and protected against CSRF with the
+Browser logins (OIDC, Cognito, mock) are session-based and protected against CSRF with the
 SPA setup (`XSRF-TOKEN` cookie echoed as `X-XSRF-TOKEN`); requests carrying a bearer token are
 exempt.
 
