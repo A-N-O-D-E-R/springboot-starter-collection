@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.0</version>
+        <version>4.1.2</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
@@ -46,6 +46,7 @@
         <module>springboot-starter-collection-github</module>
         <module>springboot-starter-collection-gitlab</module>
         <module>springboot-starter-collection-jira</module>
+        <module>springboot-starter-collection-confluence</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-b2</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-plugin</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-jdbc</module>
@@ -57,6 +58,7 @@
         <module>springboot-starter-collection-starters/spring-boot-starter-gitlab</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-notion</module>
         <module>springboot-starter-collection-starters/spring-boot-starter-jira</module>
+        <module>springboot-starter-collection-starters/spring-boot-starter-confluence</module>
     </modules>
     <properties>
         <java.version>25</java.version>

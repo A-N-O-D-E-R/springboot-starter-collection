@@ -15,15 +15,20 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
-/** Retries 429/502/503/504 responses with Spring's {@link RetryTemplate}. */
-final class TransientResponseRetry implements ClientHttpRequestInterceptor {
+/**
+ * Retries 429/502/503/504 responses with Spring's {@link RetryTemplate}. A {@code Retry-After} header given in
+ * seconds is honoured (capped at {@value #MAX_RETRY_AFTER_SECONDS}s) on top of the policy's back-off.
+ */
+public final class TransientResponseRetry implements ClientHttpRequestInterceptor {
 
     private static final Set<HttpStatus> TRANSIENT = Set.of(
             HttpStatus.TOO_MANY_REQUESTS, HttpStatus.BAD_GATEWAY, HttpStatus.SERVICE_UNAVAILABLE, HttpStatus.GATEWAY_TIMEOUT);
 
+    static final long MAX_RETRY_AFTER_SECONDS = 30;
+
     private final RetryTemplate retryTemplate;
 
-    TransientResponseRetry(RetryPolicy policy) {
+    public TransientResponseRetry(RetryPolicy policy) {
         this.retryTemplate = new RetryTemplate(policy);
     }
 
@@ -37,7 +42,6 @@ final class TransientResponseRetry implements ClientHttpRequestInterceptor {
         }
     }
 
-    // ponytail: fixed back-off from the policy; honour Retry-After if Jira's limits start to bite
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
             throws IOException {
@@ -46,7 +50,9 @@ final class TransientResponseRetry implements ClientHttpRequestInterceptor {
                 ClientHttpResponse response = execution.execute(request, body);
                 HttpStatus status = HttpStatus.resolve(response.getStatusCode().value());
                 if (status != null && TRANSIENT.contains(status)) {
+                    long wait = retryAfterSeconds(response);
                     response.close();
+                    sleep(wait);
                     throw new TransientStatus(response.getStatusCode());
                 }
                 return response;
@@ -59,6 +65,28 @@ final class TransientResponseRetry implements ClientHttpRequestInterceptor {
                 throw io;
             }
             throw new IOException(e.getCause());
+        }
+    }
+
+    private static long retryAfterSeconds(ClientHttpResponse response) {
+        String header = response.getHeaders().getFirst("Retry-After");
+        if (header == null) {
+            return 0;
+        }
+        try {
+            return Math.clamp(Long.parseLong(header.strip()), 0, MAX_RETRY_AFTER_SECONDS);
+        } catch (NumberFormatException httpDate) {
+            return 0; // HTTP-date form: rely on the policy's back-off
+        }
+    }
+
+    private static void sleep(long seconds) {
+        if (seconds > 0) {
+            try {
+                Thread.sleep(seconds * 1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
