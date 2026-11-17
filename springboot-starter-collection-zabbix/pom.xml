@@ -12,6 +12,8 @@
     <artifactId>springboot-starter-collection-zabbix</artifactId>
     <packaging>jar</packaging>
 
+    <name>Spring Boot Starter Collection Zabbix</name>
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
