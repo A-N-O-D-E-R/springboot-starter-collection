@@ -23,6 +23,11 @@ public class AnodeSecurityProperties {
     /** Any OpenID Connect provider configured through {@code spring.security.oauth2.client.*}. */
     private boolean envOidc = false;
     private boolean mock = false;
+    /**
+     * With {@code mock}: serve the starter's own form login (any user name, any password). Switch off when the
+     * application brings its own development login and has its own {@code /login} page.
+     */
+    private boolean mockFormLogin = true;
     @Value("${POST_LOGOUT_URL:${FRONTEND_URL:http://localhost:5173}}")
     private String postLogoutUrl;
     @Value("${LOGIN_URL:${FRONTEND_URL:/login}}")
@@ -91,6 +96,14 @@ public class AnodeSecurityProperties {
     /** Whether users log in through the browser and then hold a session cookie. */
     public boolean isSessionLogin() {
         return mock || envOkta || envCognito || envOidc;
+    }
+
+    public boolean isMockFormLogin() {
+        return mockFormLogin;
+    }
+
+    public void setMockFormLogin(boolean mockFormLogin) {
+        this.mockFormLogin = mockFormLogin;
     }
 
     public boolean isEnabled() {

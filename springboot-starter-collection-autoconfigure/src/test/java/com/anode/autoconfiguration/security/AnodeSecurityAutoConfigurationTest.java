@@ -154,6 +154,48 @@ class AnodeSecurityAutoConfigurationTest {
         }
     }
 
+    /** Mock mode for an application with its own development login and its own bearer credentials (API keys). */
+    @Nested
+    @SpringBootTest(classes = SecurityTestApplication.class, properties = {
+            "anode.security.mock=true",
+            "anode.security.mock-form-login=false"
+    })
+    @AutoConfigureMockMvc
+    @Import(OwnLoginAndKeys.Keys.class)
+    class OwnLoginAndKeys {
+
+        @TestConfiguration
+        static class Keys {
+            /** Any bearer token is the API key of user "key". */
+            @Bean
+            org.springframework.security.authentication.AuthenticationManagerResolver<jakarta.servlet.http.HttpServletRequest> apiKeys() {
+                return request -> authentication -> new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                        "key", null, java.util.List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_USER")));
+            }
+        }
+
+        @Autowired MockMvc mvc;
+
+        @Test
+        void aBearerKeyAuthenticatesEvenInMockMode() throws Exception {
+            mvc.perform(get("/whoami").header("Authorization", "Bearer k-1"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.name", Matchers.is("key")));
+        }
+
+        @Test
+        void aBearerRequestNeedsNoCsrfToken() throws Exception {
+            mvc.perform(post("/things").header("Authorization", "Bearer k-1")).andExpect(status().isOk());
+        }
+
+        @Test
+        void theStartersFormLoginIsNotServed() throws Exception {
+            mvc.perform(get("/login").accept("text/html")).andExpect(status().is4xxClientError());
+            mvc.perform(post("/login").with(csrf()).param("username", "alice").param("password", "x"))
+                    .andExpect(status().is4xxClientError());
+        }
+    }
+
     /** Any OpenID Connect provider (Pocket ID, Keycloak...) configured through Spring's client properties. */
     @Nested
     @SpringBootTest(classes = SecurityTestApplication.class, properties = {

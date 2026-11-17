@@ -136,12 +136,14 @@ public class AnodeSecurityAutoConfiguration {
         }
 
         if (anodeSecurityProperties.isMock()) {
+            if (anodeSecurityProperties.isMockFormLogin()) {
             http.formLogin(withDefaults())
                     .logout(logout -> logout.logoutSuccessUrl(anodeSecurityProperties.getPostLogoutUrl()))
                     .authenticationManager(authentication -> switch (authentication.getPrincipal()) {
                         case String user -> oidcAuthentication(getOidcUserInfo(user), claimsToRoleMapper);
                         case null, default -> throw new InternalAuthenticationServiceException("Can not read user principal");
                     });
+            }
         } else {
             if (anodeSecurityProperties.isEnvOkta()) {
                 Okta.configureOAuth2WithPkce(http, clientRegistrationRepository.orElseThrow());
@@ -154,9 +156,11 @@ public class AnodeSecurityAutoConfiguration {
                                 .userInfoEndpoint(userInfo -> userInfo.userAuthoritiesMapper(grantedAuthoritiesMapper(claimsToRoleMapper))))
                         .oauth2Client(withDefaults());
             }
-            authenticationManagerResolver.ifPresent(resolver ->
-                    http.oauth2ResourceServer(oauth2 -> oauth2.authenticationManagerResolver(resolver)));
         }
+        // Bearer tokens, whatever the browser login: the starter's issuer resolver, or the application's own
+        // AuthenticationManagerResolver bean (e.g. opaque API keys); the latter also works in mock mode.
+        authenticationManagerResolver.ifPresent(resolver ->
+                http.oauth2ResourceServer(oauth2 -> oauth2.authenticationManagerResolver(resolver)));
 
         if (spnegoFilter.isPresent() && spnegoEntryPoint.isPresent()) {
             // Registered as a *default-for* entry, not the single default: if a browser login mode
