@@ -1,8 +1,8 @@
 # Security Spring Boot Starter
 
-Spring Boot starter for auto-configuring application security with support for OAuth2/OIDC (any provider, Cognito), local self-issued JWT, and Kerberos/SPNEGO authentication.
+Spring Boot starter for auto-configuring application security with support for OAuth2/OIDC (Okta, Cognito), local self-issued JWT, and Kerberos/SPNEGO authentication.
 
-A single `SecurityFilterChain` is built. JWT-bearing requests (OIDC/Cognito/local) are routed to the right `AuthenticationManager` by issuer via a `JwtIssuerAuthenticationManagerResolver` — each provider, including the local one, is just a trusted entry in that map, so any combination of them can be enabled together. Kerberos runs alongside as an independent SPNEGO filter/provider; both paths deposit a standard Spring Security `Authentication` in the `SecurityContext`.
+A single `SecurityFilterChain` is built. JWT-bearing requests (Okta/Cognito/local) are routed to the right `AuthenticationManager` by issuer via a `JwtIssuerAuthenticationManagerResolver` — each provider, including the local one, is just a trusted entry in that map, so any combination of them can be enabled together. Kerberos runs alongside as an independent SPNEGO filter/provider; both paths deposit a standard Spring Security `Authentication` in the `SecurityContext`.
 
 ## Usage
 
@@ -20,7 +20,7 @@ Enable any combination via configuration (each becomes a trusted issuer on the s
 
 | Mode | Property |
 |------|----------|
-| Any OpenID Connect provider (`spring.security.oauth2.client.*`; several registrations work) | `anode.security.env-oidc=true` |
+| Okta OAuth2/OIDC | `anode.security.env-okta=true` |
 | AWS Cognito OAuth2 | `anode.security.env-cognito=true` |
 | Local JWT (dev) | `anode.security.env-local-jwt=true` |
 | Mock (form login, dev) | `anode.security.mock=true` |
@@ -42,7 +42,7 @@ When `anode.security.env-local-jwt=true`, an `EnvironmentPostProcessor` runs ear
 | `anode.security.jwt.issuer` | `$JWT_ISSUER` | `anode-local` |
 | `anode.security.jwt.expiration` | `$JWT_EXPIRATION` | `3600` |
 
-The auto-configuration then wires a `JwtDecoder`/`JwtEncoder` (HMAC-SHA256) and registers `anode.security.jwt.issuer` as a trusted issuer on the shared `JwtIssuerAuthenticationManagerResolver` — same mechanism as OIDC/Cognito, just with this app acting as its own issuer. The decoder rejects any token whose `iss` claim doesn't match, so tokens you mint with `JwtEncoder` must set `.issuer(...)` to that value.
+The auto-configuration then wires a `JwtDecoder`/`JwtEncoder` (HMAC-SHA256) and registers `anode.security.jwt.issuer` as a trusted issuer on the shared `JwtIssuerAuthenticationManagerResolver` — same mechanism as Okta/Cognito, just with this app acting as its own issuer. The decoder rejects any token whose `iss` claim doesn't match, so tokens you mint with `JwtEncoder` must set `.issuer(...)` to that value.
 
 ### Configuration
 
@@ -95,19 +95,19 @@ public Customizer<HttpSecurity> mySecurityCustomizer() {
 
 ### Do not use in production
 
-Local JWT mode uses a symmetric shared secret with no key rotation or token revocation. Use Cognito or another OIDC provider for production deployments.
+Local JWT mode uses a symmetric shared secret with no key rotation or token revocation. Use Okta, Cognito, or another OIDC provider for production deployments.
 
 ---
 
 ## Kerberos/SPNEGO (`anode.security.env-kerberos`)
 
-Intranet SSO via a Kerberos ticket. Runs on the same `SecurityFilterChain` as any other enabled mode — it doesn't replace OIDC/Cognito/mock, it complements them.
+Intranet SSO via a Kerberos ticket. Runs on the same `SecurityFilterChain` as any other enabled mode — it doesn't replace Okta/Cognito/mock, it complements them.
 
 ### How it works
 
 A `SpnegoAuthenticationProcessingFilter` is inserted before Spring's basic-auth filter; a `KerberosServiceAuthenticationProvider` validates the ticket against your keytab and loads the principal via a `UserDetailsService` (override the `UserDetailsService` bean to source roles from LDAP or elsewhere — the default just grants `ROLE_USER`).
 
-If Kerberos is the only mode enabled, unauthenticated requests get a `WWW-Authenticate: Negotiate` challenge unconditionally. If it's combined with OIDC, Cognito, or mock, Spring Security's own content-negotiation split decides which challenge applies: browser navigations (`Accept: text/html`) fall through to the OIDC/mock login page, everything else (SPNEGO-capable service clients, plain API calls) gets the Negotiate challenge. No custom routing code needed — this is the same `defaultAuthenticationEntryPointFor` mechanism Spring Security uses internally to combine formLogin with httpBasic.
+If Kerberos is the only mode enabled, unauthenticated requests get a `WWW-Authenticate: Negotiate` challenge unconditionally. If it's combined with Okta, Cognito, or mock, Spring Security's own content-negotiation split decides which challenge applies: browser navigations (`Accept: text/html`) fall through to the OIDC/mock login page, everything else (SPNEGO-capable service clients, plain API calls) gets the Negotiate challenge. No custom routing code needed — this is the same `defaultAuthenticationEntryPointFor` mechanism Spring Security uses internally to combine formLogin with httpBasic.
 
 Either path — Kerberos ticket or OIDC token — ends up as a standard `Authentication` in the `SecurityContext`; downstream code (`@PreAuthorize`, `Authentication` injection, etc.) doesn't need to know which one was used.
 
@@ -130,7 +130,7 @@ KERBEROS_LDAP_FILTER=(userPrincipalName={0})
 
 ```properties
 anode.security.env-kerberos=true
-anode.security.env-oidc=true
+anode.security.env-okta=true
 ```
 
-Desktop clients on the intranet authenticate transparently via Kerberos; everyone else gets redirected to the OIDC provider's login page.
+Desktop clients on the intranet authenticate transparently via Kerberos; everyone else gets redirected to Okta's login page.

@@ -54,7 +54,7 @@ public class OidcUtils {
                 new SimpleGrantedAuthority("SCOPE_profile")
         ), oidcIdToken, userInfo);
 
-        return new OAuth2AuthenticationToken(user, grantedAuthoritiesMapper.mapAuthorities(user.getAuthorities()), "mock");
+        return new OAuth2AuthenticationToken(user, grantedAuthoritiesMapper.mapAuthorities(user.getAuthorities()), "okta");
     }
 
     /**

@@ -15,7 +15,7 @@
 
     <name>Security Spring Boot Starter</name>
     <description>Spring Boot starter for auto-configuring application security with support for
-        OAuth2/OIDC (any provider, Cognito), Kerberos/SPNEGO, and local self-issued JWT authentication</description>
+        OAuth2/OIDC (Okta, Cognito), Kerberos/SPNEGO, and local self-issued JWT authentication</description>
 
     <dependencies>
         <dependency>

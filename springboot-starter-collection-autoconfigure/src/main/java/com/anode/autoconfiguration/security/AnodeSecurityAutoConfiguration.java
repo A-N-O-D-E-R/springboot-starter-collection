@@ -7,6 +7,7 @@ import com.anode.security.oidc.AnodeGrantedAuthoritiesMapper;
 import com.anode.security.oidc.ClaimsToRoleMapper;
 import com.anode.security.oidc.GroupsClaimsToRoleMapper;
 import com.anode.security.oidc.OidcUtils;
+import com.okta.spring.boot.oauth.Okta;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -40,6 +41,7 @@ import org.springframework.security.kerberos.authentication.KerberosServiceAuthe
 import org.springframework.security.kerberos.authentication.sun.SunJaasKerberosTicketValidator;
 import org.springframework.security.kerberos.web.authentication.SpnegoAuthenticationProcessingFilter;
 import org.springframework.security.kerberos.web.authentication.SpnegoEntryPoint;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
@@ -73,17 +75,17 @@ import static com.anode.security.oidc.OidcUtils.oidcAuthentication;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 /**
- * Single security auto-configuration for every supported mechanism: OIDC (Cognito, any
+ * Single security auto-configuration for every supported mechanism: OIDC (Okta, Cognito, any
  * provider through {@code anode.security.env-oidc}),
  * local self-issued JWT, mock/form-login, and Kerberos/SPNEGO. Exactly one
  * {@link SecurityFilterChain} is built.
  * <p>
- * JWT-bearing requests (Cognito/local) are routed to the right {@link AuthenticationManager}
+ * JWT-bearing requests (Okta/Cognito/local) are routed to the right {@link AuthenticationManager}
  * by issuer via a {@link JwtIssuerAuthenticationManagerResolver} — each provider, including the
  * local one, is just another trusted issuer. Kerberos runs as an independent
  * {@link SpnegoAuthenticationProcessingFilter}/{@link KerberosServiceAuthenticationProvider} pair;
  * both paths still deposit a standard Spring Security {@code Authentication} in the
- * {@code SecurityContext}. When Kerberos is combined with a browser login mode (Cognito,
+ * {@code SecurityContext}. When Kerberos is combined with a browser login mode (Okta, Cognito,
  * mock), Spring Security's own content-negotiation split decides which challenge a given request
  * gets: browser navigations (Accept: text/html) fall through to the OIDC/mock login already
  * registered, everything else (SPNEGO-capable clients, API calls) gets the Kerberos
@@ -96,9 +98,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableConfigurationProperties(AnodeSecurityProperties.class)
 @EnableMethodSecurity(securedEnabled = true)
 @ConditionalOnProperty(value = "anode.security.enabled", havingValue = "true", matchIfMissing = true)
-@ConditionalOnExpression("${anode.security.mock:false} or ${anode.security.env-cognito:false} or ${anode.security.env-oidc:false} or ${anode.security.env-local-jwt:false} or ${anode.security.env-kerberos:false}")
+@ConditionalOnExpression("${anode.security.mock:false} or ${anode.security.env-okta:false} or ${anode.security.env-cognito:false} or ${anode.security.env-oidc:false} or ${anode.security.env-local-jwt:false} or ${anode.security.env-kerberos:false}")
 @ConditionalOnDefaultWebSecurity
-@AutoConfigureOrder(-1) // before Boot's default security, so this is the one SecurityFilterChain
+@AutoConfigureOrder(-1) // run before Okta's own starter so it doesn't configure its own SecurityFilterChain
 public class AnodeSecurityAutoConfiguration {
 
     @Bean
@@ -106,6 +108,7 @@ public class AnodeSecurityAutoConfiguration {
                                           ClaimsToRoleMapper claimsToRoleMapper,
                                           List<Customizer<HttpSecurity>> httpSecurityCustomizers,
                                           List<AuthorizationRules> authorizationRules,
+                                          Optional<ClientRegistrationRepository> clientRegistrationRepository,
                                           Optional<AuthenticationManagerResolver<HttpServletRequest>> authenticationManagerResolver,
                                           Optional<SpnegoAuthenticationProcessingFilter> spnegoFilter,
                                           Optional<SpnegoEntryPoint> spnegoEntryPoint) throws Exception {
@@ -142,7 +145,13 @@ public class AnodeSecurityAutoConfiguration {
                     });
             }
         } else {
-            if (anodeSecurityProperties.isEnvCognito() || anodeSecurityProperties.isEnvOidc()) {
+            if (anodeSecurityProperties.isEnvOkta()) {
+                Okta.configureOAuth2WithPkce(http, clientRegistrationRepository.orElseThrow());
+                http.oauth2Client(withDefaults());
+                if (anodeSecurityProperties.getLoginUrl() != null && !anodeSecurityProperties.getLoginUrl().isEmpty()) {
+                    http.oauth2Login(oauth2 -> oauth2.loginPage(anodeSecurityProperties.getLoginUrl()));
+                }
+            } else if (anodeSecurityProperties.isEnvCognito() || anodeSecurityProperties.isEnvOidc()) {
                 http.oauth2Login(oauth2 -> oauth2
                                 .userInfoEndpoint(userInfo -> userInfo.userAuthoritiesMapper(grantedAuthoritiesMapper(claimsToRoleMapper))))
                         .oauth2Client(withDefaults());
@@ -155,7 +164,7 @@ public class AnodeSecurityAutoConfiguration {
 
         if (spnegoFilter.isPresent() && spnegoEntryPoint.isPresent()) {
             // Registered as a *default-for* entry, not the single default: if a browser login mode
-            // (Cognito/mock) is also active above, its own entry point is scoped to
+            // (Okta/Cognito/mock) is also active above, its own entry point is scoped to
             // Accept: text/html requests and takes priority; this one catches everything else
             // (Negotiate-capable / API clients). If Kerberos is the only mechanism enabled, this
             // is the sole mapping and becomes the effective default outright.
@@ -210,21 +219,25 @@ public class AnodeSecurityAutoConfiguration {
 
     /**
      * Resolves the {@link AuthenticationManager} to use for a JWT-bearing request based on its
-     * issuer claim, trusting Cognito (via OIDC discovery) and this app's own local-JWT
+     * issuer claim, trusting Okta/Cognito (via OIDC discovery) and this app's own local-JWT
      * issuer — mirrors {@code AtsSecurityAutoconfiguration}, extended so the local issuer is just
      * another trusted entry rather than a separate mechanism. Not created in mock mode, nor when
-     * none of Cognito/OIDC/local-JWT are enabled (e.g. Kerberos-only setups have no JWT issuer to
+     * none of Okta/Cognito/local-JWT are enabled (e.g. Kerberos-only setups have no JWT issuer to
      * resolve).
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnExpression("!${anode.security.mock:false} and (${anode.security.env-cognito:false} or ${anode.security.env-oidc:false} or ${anode.security.env-local-jwt:false})")
+    @ConditionalOnExpression("!${anode.security.mock:false} and (${anode.security.env-okta:false} or ${anode.security.env-cognito:false} or ${anode.security.env-oidc:false} or ${anode.security.env-local-jwt:false})")
     AuthenticationManagerResolver<HttpServletRequest> authenticationManagerResolver(
             Environment environment, AnodeSecurityProperties anodeSecurityProperties, Optional<JwtDecoder> localJwtDecoder,
             ClaimsToRoleMapper claimsToRoleMapper) {
 
         Map<String, AuthenticationManager> managersByIssuer = new LinkedHashMap<>();
 
+        if (anodeSecurityProperties.isEnvOkta()) {
+            var issuer = environment.getRequiredProperty("okta.oauth2.issuer");
+            managersByIssuer.put(issuer, jwtAuthenticationManager(JwtDecoders.fromIssuerLocation(issuer), claimsToRoleMapper));
+        }
         if (anodeSecurityProperties.isEnvCognito()) {
             var issuer = environment.getRequiredProperty("spring.security.oauth2.client.provider.cognito.issuer-uri");
             managersByIssuer.put(issuer, jwtAuthenticationManager(JwtDecoders.fromIssuerLocation(issuer), claimsToRoleMapper));
