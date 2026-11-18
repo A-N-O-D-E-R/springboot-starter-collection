@@ -106,6 +106,23 @@
     },
     "type": "object"
    },
+   "BulkOperationErrorResult": {
+    "additionalProperties": false,
+    "properties": {
+     "elementErrors": {
+      "$ref": "#/components/schemas/ErrorCollection"
+     },
+     "failedElementNumber": {
+      "format": "int32",
+      "type": "integer"
+     },
+     "status": {
+      "format": "int32",
+      "type": "integer"
+     }
+    },
+    "type": "object"
+   },
    "ChangeDetails": {
     "additionalProperties": false,
     "description": "A change item.",
@@ -272,6 +289,69 @@
     },
     "type": "object"
    },
+   "CreatedIssue": {
+    "additionalProperties": false,
+    "description": "Details about a created issue or subtask.",
+    "properties": {
+     "id": {
+      "description": "The ID of the created issue or subtask.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "key": {
+      "description": "The key of the created issue or subtask.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "self": {
+      "description": "The URL of the created issue or subtask.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "transition": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/NestedResponse"
+       }
+      ],
+      "description": "The response code and messages related to any requested transition.",
+      "readOnly": true
+     },
+     "watchers": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/NestedResponse"
+       }
+      ],
+      "description": "The response code and messages related to any requested watchers.",
+      "readOnly": true
+     }
+    },
+    "type": "object"
+   },
+   "CreatedIssues": {
+    "additionalProperties": false,
+    "description": "Details about the issues created and the errors for requests that failed.",
+    "properties": {
+     "errors": {
+      "description": "Error details for failed issue creation requests.",
+      "items": {
+       "$ref": "#/components/schemas/BulkOperationErrorResult"
+      },
+      "readOnly": true,
+      "type": "array"
+     },
+     "issues": {
+      "description": "Details of the issues created.",
+      "items": {
+       "$ref": "#/components/schemas/CreatedIssue"
+      },
+      "readOnly": true,
+      "type": "array"
+     }
+    },
+    "type": "object"
+   },
    "EntityProperty": {
     "additionalProperties": false,
     "description": "An entity property, for more information see [Entity properties](https://developer.atlassian.com/cloud/jira/platform/jira-entity-properties/).",
@@ -282,6 +362,49 @@
      },
      "value": {
       "description": "The value of the property. Required on create and update."
+     }
+    },
+    "type": "object"
+   },
+   "ErrorCollection": {
+    "additionalProperties": false,
+    "description": "Error messages from an operation.",
+    "properties": {
+     "errorMessages": {
+      "description": "The list of error messages produced by this operation. For example, \"input parameter 'key' must be provided\"",
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "errors": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "description": "The list of errors by parameter returned by the operation. For example,\"projectKey\": \"Project keys must start with an uppercase letter, followed by one or more uppercase alphanumeric characters.\"",
+      "type": "object"
+     },
+     "status": {
+      "format": "int32",
+      "type": "integer"
+     }
+    },
+    "type": "object"
+   },
+   "ExpandPrioritySchemePage": {
+    "additionalProperties": true,
+    "properties": {
+     "maxResults": {
+      "format": "int32",
+      "type": "integer"
+     },
+     "startAt": {
+      "format": "int64",
+      "type": "integer"
+     },
+     "total": {
+      "format": "int64",
+      "type": "integer"
      }
     },
     "type": "object"
@@ -400,6 +523,67 @@
      "set": {
       "description": "The value to set in the field.",
       "example": "A new summary"
+     }
+    },
+    "type": "object"
+   },
+   "Fields": {
+    "additionalProperties": false,
+    "description": "Key fields from the linked issue.",
+    "properties": {
+     "assignee": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/UserDetails"
+       }
+      ],
+      "description": "The assignee of the linked issue.",
+      "readOnly": true
+     },
+     "issueType": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/IssueTypeDetails"
+       }
+      ],
+      "description": "The type of the linked issue.",
+      "readOnly": true
+     },
+     "issuetype": {
+      "$ref": "#/components/schemas/IssueTypeDetails",
+      "description": "The type of the linked issue."
+     },
+     "priority": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/Priority"
+       }
+      ],
+      "description": "The priority of the linked issue.",
+      "readOnly": true
+     },
+     "status": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/StatusDetails"
+       }
+      ],
+      "description": "The status of the linked issue.",
+      "readOnly": true
+     },
+     "summary": {
+      "description": "The summary description of the linked issue.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "timetracking": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/TimeTrackingDetails"
+       }
+      ],
+      "description": "The time tracking of the linked issue.",
+      "readOnly": true
      }
     },
     "type": "object"
@@ -671,6 +855,35 @@
      "name": "issue"
     }
    },
+   "IssueLinkType": {
+    "additionalProperties": false,
+    "description": "This object is used as follows:\n\n *  In the [ issueLink](#api-rest-api-3-issueLink-post) resource it defines and reports on the type of link between the issues. Find a list of issue link types with [Get issue link types](#api-rest-api-3-issueLinkType-get).\n *  In the [ issueLinkType](#api-rest-api-3-issueLinkType-post) resource it defines and reports on issue link types.",
+    "properties": {
+     "id": {
+      "description": "The ID of the issue link type and is used as follows:\n\n *  In the [ issueLink](#api-rest-api-3-issueLink-post) resource it is the type of issue link. Required on create when `name` isn't provided. Otherwise, read only.\n *  In the [ issueLinkType](#api-rest-api-3-issueLinkType-post) resource it is read only.",
+      "type": "string"
+     },
+     "inward": {
+      "description": "The description of the issue link type inward link and is used as follows:\n\n *  In the [ issueLink](#api-rest-api-3-issueLink-post) resource it is read only.\n *  In the [ issueLinkType](#api-rest-api-3-issueLinkType-post) resource it is required on create and optional on update. Otherwise, read only.",
+      "type": "string"
+     },
+     "name": {
+      "description": "The name of the issue link type and is used as follows:\n\n *  In the [ issueLink](#api-rest-api-3-issueLink-post) resource it is the type of issue link. Required on create when `id` isn't provided. Otherwise, read only.\n *  In the [ issueLinkType](#api-rest-api-3-issueLinkType-post) resource it is required on create and optional on update. Otherwise, read only.",
+      "type": "string"
+     },
+     "outward": {
+      "description": "The description of the issue link type outward link and is used as follows:\n\n *  In the [ issueLink](#api-rest-api-3-issueLink-post) resource it is read only.\n *  In the [ issueLinkType](#api-rest-api-3-issueLinkType-post) resource it is required on create and optional on update. Otherwise, read only.",
+      "type": "string"
+     },
+     "self": {
+      "description": "The URL of the issue link type. Read only.",
+      "format": "uri",
+      "readOnly": true,
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
    "IssueTransition": {
     "additionalProperties": true,
     "description": "Details of an issue transition.",
@@ -737,6 +950,150 @@
     },
     "type": "object"
    },
+   "IssueTypeDetails": {
+    "additionalProperties": false,
+    "description": "Details about an issue type.",
+    "properties": {
+     "avatarId": {
+      "description": "The ID of the issue type's avatar.",
+      "format": "int64",
+      "readOnly": true,
+      "type": "integer"
+     },
+     "description": {
+      "description": "The description of the issue type.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "entityId": {
+      "description": "Unique ID for next-gen projects.",
+      "format": "uuid",
+      "readOnly": true,
+      "type": "string"
+     },
+     "hierarchyLevel": {
+      "description": "Hierarchy level of the issue type.",
+      "format": "int32",
+      "readOnly": true,
+      "type": "integer"
+     },
+     "iconUrl": {
+      "description": "The URL of the issue type's avatar.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "id": {
+      "description": "The ID of the issue type.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "name": {
+      "description": "The name of the issue type.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "scope": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/Scope"
+       }
+      ],
+      "description": "Details of the next-gen projects the issue type is available in.",
+      "readOnly": true
+     },
+     "self": {
+      "description": "The URL of these issue type details.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "subtask": {
+      "description": "Whether this issue type is used to create subtasks.",
+      "readOnly": true,
+      "type": "boolean"
+     }
+    },
+    "type": "object"
+   },
+   "IssueTypeIssueCreateMetadata": {
+    "additionalProperties": false,
+    "description": "Details of the issue creation metadata for an issue type.",
+    "properties": {
+     "avatarId": {
+      "description": "The ID of the issue type's avatar.",
+      "format": "int64",
+      "readOnly": true,
+      "type": "integer"
+     },
+     "description": {
+      "description": "The description of the issue type.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "entityId": {
+      "description": "Unique ID for next-gen projects.",
+      "format": "uuid",
+      "readOnly": true,
+      "type": "string"
+     },
+     "expand": {
+      "description": "Expand options that include additional issue type metadata details in the response.",
+      "readOnly": true,
+      "type": "string",
+      "xml": {
+       "attribute": true
+      }
+     },
+     "fields": {
+      "additionalProperties": {
+       "$ref": "#/components/schemas/FieldMetadata"
+      },
+      "description": "List of the fields available when creating an issue for the issue type.",
+      "readOnly": true,
+      "type": "object"
+     },
+     "hierarchyLevel": {
+      "description": "Hierarchy level of the issue type.",
+      "format": "int32",
+      "readOnly": true,
+      "type": "integer"
+     },
+     "iconUrl": {
+      "description": "The URL of the issue type's avatar.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "id": {
+      "description": "The ID of the issue type.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "name": {
+      "description": "The name of the issue type.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "scope": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/Scope"
+       }
+      ],
+      "description": "Details of the next-gen projects the issue type is available in.",
+      "readOnly": true
+     },
+     "self": {
+      "description": "The URL of these issue type details.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "subtask": {
+      "description": "Whether this issue type is used to create subtasks.",
+      "readOnly": true,
+      "type": "boolean"
+     }
+    },
+    "type": "object"
+   },
    "IssueUpdateDetails": {
     "additionalProperties": true,
     "description": "Details of an issue update request.",
@@ -791,6 +1148,18 @@
       },
       "readOnly": true,
       "type": "object"
+     }
+    },
+    "type": "object"
+   },
+   "IssuesUpdateBean": {
+    "additionalProperties": true,
+    "properties": {
+     "issueUpdates": {
+      "items": {
+       "$ref": "#/components/schemas/IssueUpdateDetails"
+      },
+      "type": "array"
      }
     },
     "type": "object"
@@ -871,12 +1240,81 @@
     },
     "type": "object"
    },
+   "LinkIssueRequestJsonBean": {
+    "additionalProperties": false,
+    "properties": {
+     "comment": {
+      "$ref": "#/components/schemas/Comment"
+     },
+     "inwardIssue": {
+      "$ref": "#/components/schemas/LinkedIssue"
+     },
+     "outwardIssue": {
+      "$ref": "#/components/schemas/LinkedIssue"
+     },
+     "type": {
+      "$ref": "#/components/schemas/IssueLinkType"
+     }
+    },
+    "required": [
+     "inwardIssue",
+     "outwardIssue",
+     "type"
+    ],
+    "type": "object"
+   },
+   "LinkedIssue": {
+    "additionalProperties": false,
+    "description": "The ID or key of a linked issue.",
+    "properties": {
+     "fields": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/Fields"
+       }
+      ],
+      "description": "The fields associated with the issue.",
+      "readOnly": true
+     },
+     "id": {
+      "description": "The ID of an issue. Required if `key` isn't provided.",
+      "type": "string"
+     },
+     "key": {
+      "description": "The key of an issue. Required if `id` isn't provided.",
+      "type": "string"
+     },
+     "self": {
+      "description": "The URL of the issue.",
+      "format": "uri",
+      "readOnly": true,
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
    "ListWrapperCallbackApplicationRole": {
     "additionalProperties": false,
     "type": "object"
    },
    "ListWrapperCallbackGroupName": {
     "additionalProperties": false,
+    "type": "object"
+   },
+   "NestedResponse": {
+    "additionalProperties": false,
+    "properties": {
+     "errorCollection": {
+      "$ref": "#/components/schemas/ErrorCollection"
+     },
+     "status": {
+      "format": "int32",
+      "type": "integer"
+     },
+     "warningCollection": {
+      "$ref": "#/components/schemas/WarningCollection"
+     }
+    },
     "type": "object"
    },
    "Operations": {
@@ -923,6 +1361,94 @@
       "format": "int32",
       "readOnly": true,
       "type": "integer"
+     }
+    },
+    "type": "object"
+   },
+   "PageOfCreateMetaIssueTypes": {
+    "additionalProperties": true,
+    "description": "A page of CreateMetaIssueTypes.",
+    "properties": {
+     "createMetaIssueType": {
+      "items": {
+       "$ref": "#/components/schemas/IssueTypeIssueCreateMetadata"
+      },
+      "type": "array",
+      "writeOnly": true
+     },
+     "issueTypes": {
+      "description": "The list of CreateMetaIssueType.",
+      "items": {
+       "$ref": "#/components/schemas/IssueTypeIssueCreateMetadata"
+      },
+      "readOnly": true,
+      "type": "array"
+     },
+     "maxResults": {
+      "description": "The maximum number of items to return per page.",
+      "format": "int32",
+      "readOnly": true,
+      "type": "integer"
+     },
+     "startAt": {
+      "description": "The index of the first item returned.",
+      "format": "int64",
+      "readOnly": true,
+      "type": "integer"
+     },
+     "total": {
+      "description": "The total number of items in all pages.",
+      "format": "int64",
+      "readOnly": true,
+      "type": "integer"
+     }
+    },
+    "type": "object"
+   },
+   "Priority": {
+    "additionalProperties": true,
+    "description": "An issue priority.",
+    "properties": {
+     "avatarId": {
+      "description": "The avatarId of the avatar for the issue priority. This parameter is nullable and when set, this avatar references the universal avatar APIs.",
+      "format": "int64",
+      "type": "integer"
+     },
+     "description": {
+      "description": "The description of the issue priority.",
+      "type": "string"
+     },
+     "iconUrl": {
+      "description": "The URL of the icon for the issue priority.",
+      "type": "string"
+     },
+     "id": {
+      "description": "The ID of the issue priority.",
+      "type": "string"
+     },
+     "isDefault": {
+      "description": "Whether this priority is the default.",
+      "type": "boolean"
+     },
+     "name": {
+      "description": "The name of the issue priority.",
+      "type": "string"
+     },
+     "schemes": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/ExpandPrioritySchemePage"
+       }
+      ],
+      "description": "Priority schemes associated with the issue priority."
+     },
+     "self": {
+      "description": "The URL of the issue priority.",
+      "type": "string"
+     },
+     "statusColor": {
+      "description": "The color used to indicate the issue priority.",
+      "type": "string"
      }
     },
     "type": "object"
@@ -1357,6 +1883,46 @@
     },
     "type": "object"
    },
+   "TimeTrackingDetails": {
+    "additionalProperties": false,
+    "description": "Time tracking details.",
+    "properties": {
+     "originalEstimate": {
+      "description": "The original estimate of time needed for this issue in readable format.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "originalEstimateSeconds": {
+      "description": "The original estimate of time needed for this issue in seconds.",
+      "format": "int64",
+      "readOnly": true,
+      "type": "integer"
+     },
+     "remainingEstimate": {
+      "description": "The remaining estimate of time needed for this issue in readable format.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "remainingEstimateSeconds": {
+      "description": "The remaining estimate of time needed for this issue in seconds.",
+      "format": "int64",
+      "readOnly": true,
+      "type": "integer"
+     },
+     "timeSpent": {
+      "description": "Time worked on this issue in readable format.",
+      "readOnly": true,
+      "type": "string"
+     },
+     "timeSpentSeconds": {
+      "description": "Time worked on this issue in seconds.",
+      "format": "int64",
+      "readOnly": true,
+      "type": "integer"
+     }
+    },
+    "type": "object"
+   },
    "Transitions": {
     "additionalProperties": false,
     "description": "List of issue transitions.",
@@ -1601,6 +2167,18 @@
      }
     },
     "type": "object"
+   },
+   "WarningCollection": {
+    "additionalProperties": false,
+    "properties": {
+     "warnings": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     }
+    },
+    "type": "object"
    }
   },
   "securitySchemes": {
@@ -1622,10 +2200,702 @@
   },
   "termsOfService": "https://developer.atlassian.com/platform/marketplace/atlassian-developer-terms/",
   "title": "The Jira Cloud platform REST API",
-  "version": "1001.0.0-SNAPSHOT-3a6fd1304745f31b038791cc665cc6593c57d4d9"
+  "version": "1001.0.0-SNAPSHOT-6fa495098cd3f8b059d19f7937e8cb427cbc93e9"
  },
  "openapi": "3.0.1",
  "paths": {
+  "/rest/api/3/issue": {
+   "post": {
+    "deprecated": false,
+    "description": "Creates an issue or, where the option to create subtasks is enabled in Jira, a subtask. A transition may be applied, to move the issue or subtask to a workflow step other than the default start step, and issue properties set.\n\nThe content of the issue or subtask is defined using `update` and `fields`. The fields that can be set in the issue or subtask are determined using the [ Get create issue metadata](#api-rest-api-3-issue-createmeta-get). These are the same fields that appear on the issue's create screen. Note that the `description`, `environment`, and any `textarea` type custom fields (multi-line text fields) take Atlassian Document Format content. Single line custom fields (`textfield`) accept a string and don't handle Atlassian Document Format content.\n\nCreating a subtask differs from creating an issue as follows:\n\n *  `issueType` must be set to a subtask issue type (use [ Get create issue metadata](#api-rest-api-3-issue-createmeta-get) to find subtask issue types).\n *  `parent` must contain the ID or key of the parent issue.\n\nIn a next-gen project any issue may be made a child providing that the parent and child are members of the same project.\n\n**[Permissions](#permissions) required:** *Browse projects* and *Create issues* [project permissions](https://confluence.atlassian.com/x/yodKLg) for the project in which the issue or subtask is created.",
+    "operationId": "createIssue",
+    "parameters": [
+     {
+      "description": "Whether the project in which the issue is created is added to the user's **Recently viewed** project list, as shown under **Projects** in Jira. When provided, the issue type and request type are added to the user's history for a project. These values are then used to provide defaults on the issue create screen.",
+      "in": "query",
+      "name": "updateHistory",
+      "schema": {
+       "default": false,
+       "type": "boolean"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "example": {
+        "fields": {
+         "assignee": {
+          "id": "5b109f2e9729b51b54dc274d"
+         },
+         "components": [
+          {
+           "id": "10000"
+          }
+         ],
+         "customfield_10000": "09/Jun/19",
+         "customfield_20000": "06/Jul/19 3:25 PM",
+         "customfield_30000": [
+          "10000",
+          "10002"
+         ],
+         "customfield_40000": {
+          "content": [
+           {
+            "content": [
+             {
+              "text": "Occurs on all orders",
+              "type": "text"
+             }
+            ],
+            "type": "paragraph"
+           }
+          ],
+          "type": "doc",
+          "version": 1
+         },
+         "customfield_50000": {
+          "content": [
+           {
+            "content": [
+             {
+              "text": "Could impact day-to-day work.",
+              "type": "text"
+             }
+            ],
+            "type": "paragraph"
+           }
+          ],
+          "type": "doc",
+          "version": 1
+         },
+         "customfield_60000": "jira-software-users",
+         "customfield_70000": [
+          "jira-administrators",
+          "jira-software-users"
+         ],
+         "customfield_80000": {
+          "value": "red"
+         },
+         "description": {
+          "content": [
+           {
+            "content": [
+             {
+              "text": "Order entry fails when selecting supplier.",
+              "type": "text"
+             }
+            ],
+            "type": "paragraph"
+           }
+          ],
+          "type": "doc",
+          "version": 1
+         },
+         "duedate": "2019-05-11",
+         "environment": {
+          "content": [
+           {
+            "content": [
+             {
+              "text": "UAT",
+              "type": "text"
+             }
+            ],
+            "type": "paragraph"
+           }
+          ],
+          "type": "doc",
+          "version": 1
+         },
+         "fixVersions": [
+          {
+           "id": "10001"
+          }
+         ],
+         "issuetype": {
+          "id": "10000"
+         },
+         "labels": [
+          "bugfix",
+          "blitz_test"
+         ],
+         "parent": {
+          "key": "PROJ-123"
+         },
+         "priority": {
+          "id": "20000"
+         },
+         "project": {
+          "id": "10000"
+         },
+         "reporter": {
+          "id": "5b10a2844c20165700ede21g"
+         },
+         "security": {
+          "id": "10000"
+         },
+         "summary": "Main order flow broken",
+         "timetracking": {
+          "originalEstimate": "10",
+          "remainingEstimate": "5"
+         },
+         "versions": [
+          {
+           "id": "10000"
+          }
+         ]
+        },
+        "update": {}
+       },
+       "schema": {
+        "$ref": "#/components/schemas/IssueUpdateDetails"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "example": "{\"id\":\"10000\",\"key\":\"ED-24\",\"self\":\"https://your-domain.atlassian.net/rest/api/3/issue/10000\",\"transition\":{\"status\":200,\"errorCollection\":{\"errorMessages\":[],\"errors\":{}}}}",
+        "schema": {
+         "$ref": "#/components/schemas/CreatedIssue"
+        }
+       }
+      },
+      "description": "Returned if the request is successful."
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "example": "{\"errorMessages\":[\"Field 'priority' is required\"],\"errors\":{}}",
+        "schema": {
+         "$ref": "#/components/schemas/ErrorCollection"
+        }
+       }
+      },
+      "description": "Returned if the request:\n\n *  is missing required fields.\n *  contains invalid field values.\n *  contains fields that cannot be set for the issue type.\n *  is by a user who does not have the necessary permission.\n *  is to create a subtype in a project different that of the parent issue.\n *  is for a subtask when the option to create subtasks is disabled.\n *  is invalid for any other reason."
+     },
+     "401": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorCollection"
+        }
+       }
+      },
+      "description": "Returned if the authentication credentials are incorrect or missing."
+     },
+     "403": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorCollection"
+        }
+       }
+      },
+      "description": "Returned if the user does not have the necessary permission."
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorCollection"
+        }
+       }
+      },
+      "description": "Returned if a configuration problem prevents the creation of the issue."
+     }
+    },
+    "security": [
+     {
+      "basicAuth": []
+     },
+     {
+      "OAuth2": [
+       "write:jira-work"
+      ]
+     },
+     {}
+    ],
+    "summary": "Create issue",
+    "tags": [
+     "Issues"
+    ],
+    "x-atlassian-connect-scope": "WRITE",
+    "x-atlassian-data-security-policy": [
+     {
+      "app-access-rule-exempt": false
+     }
+    ],
+    "x-atlassian-oauth2-scopes": [
+     {
+      "scheme": "OAuth2",
+      "scopes": [
+       "write:jira-work"
+      ],
+      "state": "Current"
+     },
+     {
+      "scheme": "OAuth2",
+      "scopes": [
+       "write:issue:jira",
+       "write:comment:jira",
+       "write:comment.property:jira",
+       "write:attachment:jira",
+       "read:issue:jira"
+      ],
+      "state": "Beta"
+     }
+    ]
+   }
+  },
+  "/rest/api/3/issue/bulk": {
+   "post": {
+    "deprecated": false,
+    "description": "Creates upto **50** issues and, where the option to create subtasks is enabled in Jira, subtasks. Transitions may be applied, to move the issues or subtasks to a workflow step other than the default start step, and issue properties set.\n\nThe content of each issue or subtask is defined using `update` and `fields`. The fields that can be set in the issue or subtask are determined using the [ Get create issue metadata](#api-rest-api-3-issue-createmeta-get). These are the same fields that appear on the issues' create screens. Note that the `description`, `environment`, and any `textarea` type custom fields (multi-line text fields) take Atlassian Document Format content. Single line custom fields (`textfield`) accept a string and don't handle Atlassian Document Format content.\n\nCreating a subtask differs from creating an issue as follows:\n\n *  `issueType` must be set to a subtask issue type (use [ Get create issue metadata](#api-rest-api-3-issue-createmeta-get) to find subtask issue types).\n *  `parent` the must contain the ID or key of the parent issue.\n\n**[Permissions](#permissions) required:** *Browse projects* and *Create issues* [project permissions](https://confluence.atlassian.com/x/yodKLg) for the project in which each issue or subtask is created.",
+    "operationId": "createIssues",
+    "parameters": [],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "example": {
+        "issueUpdates": [
+         {
+          "fields": {
+           "assignee": {
+            "id": "5b109f2e9729b51b54dc274d"
+           },
+           "components": [
+            {
+             "id": "10000"
+            }
+           ],
+           "customfield_10000": "09/Jun/19",
+           "customfield_20000": "06/Jul/19 3:25 PM",
+           "customfield_30000": [
+            "10000",
+            "10002"
+           ],
+           "customfield_40000": {
+            "content": [
+             {
+              "content": [
+               {
+                "text": "Occurs on all orders",
+                "type": "text"
+               }
+              ],
+              "type": "paragraph"
+             }
+            ],
+            "type": "doc",
+            "version": 1
+           },
+           "customfield_50000": {
+            "content": [
+             {
+              "content": [
+               {
+                "text": "Could impact day-to-day work.",
+                "type": "text"
+               }
+              ],
+              "type": "paragraph"
+             }
+            ],
+            "type": "doc",
+            "version": 1
+           },
+           "customfield_60000": "jira-software-users",
+           "customfield_70000": [
+            "jira-administrators",
+            "jira-software-users"
+           ],
+           "customfield_80000": {
+            "value": "red"
+           },
+           "description": {
+            "content": [
+             {
+              "content": [
+               {
+                "text": "Order entry fails when selecting supplier.",
+                "type": "text"
+               }
+              ],
+              "type": "paragraph"
+             }
+            ],
+            "type": "doc",
+            "version": 1
+           },
+           "duedate": "2011-03-11",
+           "environment": {
+            "content": [
+             {
+              "content": [
+               {
+                "text": "UAT",
+                "type": "text"
+               }
+              ],
+              "type": "paragraph"
+             }
+            ],
+            "type": "doc",
+            "version": 1
+           },
+           "fixVersions": [
+            {
+             "id": "10001"
+            }
+           ],
+           "issuetype": {
+            "id": "10000"
+           },
+           "labels": [
+            "bugfix",
+            "blitz_test"
+           ],
+           "priority": {
+            "id": "20000"
+           },
+           "project": {
+            "id": "10000"
+           },
+           "reporter": {
+            "id": "5b10a2844c20165700ede21g"
+           },
+           "security": {
+            "id": "10000"
+           },
+           "summary": "Main order flow broken",
+           "timetracking": {
+            "originalEstimate": "10",
+            "remainingEstimate": "5"
+           },
+           "versions": [
+            {
+             "id": "10000"
+            }
+           ]
+          },
+          "update": {
+           "worklog": [
+            {
+             "add": {
+              "started": "2019-07-05T11:05:00.000+0000",
+              "timeSpent": "60m"
+             }
+            }
+           ]
+          }
+         },
+         {
+          "fields": {
+           "assignee": {
+            "id": "5b109f2e9729b51b54dc274d"
+           },
+           "components": [
+            {
+             "id": "10000"
+            }
+           ],
+           "customfield_10000": "09/Jun/19",
+           "customfield_20000": "06/Jul/19 3:25 PM",
+           "customfield_30000": [
+            "10000",
+            "10002"
+           ],
+           "customfield_40000": {
+            "content": [
+             {
+              "content": [
+               {
+                "text": "Occurs on all orders",
+                "type": "text"
+               }
+              ],
+              "type": "paragraph"
+             }
+            ],
+            "type": "doc",
+            "version": 1
+           },
+           "customfield_50000": {
+            "content": [
+             {
+              "content": [
+               {
+                "text": "Could impact day-to-day work.",
+                "type": "text"
+               }
+              ],
+              "type": "paragraph"
+             }
+            ],
+            "type": "doc",
+            "version": 1
+           },
+           "customfield_60000": "jira-software-users",
+           "customfield_70000": [
+            "jira-administrators",
+            "jira-software-users"
+           ],
+           "customfield_80000": {
+            "value": "red"
+           },
+           "description": {
+            "content": [
+             {
+              "content": [
+               {
+                "text": "Order remains pending after approved.",
+                "type": "text"
+               }
+              ],
+              "type": "paragraph"
+             }
+            ],
+            "type": "doc",
+            "version": 1
+           },
+           "duedate": "2019-04-16",
+           "environment": {
+            "content": [
+             {
+              "content": [
+               {
+                "text": "UAT",
+                "type": "text"
+               }
+              ],
+              "type": "paragraph"
+             }
+            ],
+            "type": "doc",
+            "version": 1
+           },
+           "fixVersions": [
+            {
+             "id": "10001"
+            }
+           ],
+           "issuetype": {
+            "id": "10000"
+           },
+           "labels": [
+            "new_release"
+           ],
+           "priority": {
+            "id": "20000"
+           },
+           "project": {
+            "id": "1000"
+           },
+           "reporter": {
+            "id": "5b10a2844c20165700ede21g"
+           },
+           "security": {
+            "id": "10000"
+           },
+           "summary": "Order stuck in pending",
+           "timetracking": {
+            "originalEstimate": "15",
+            "remainingEstimate": "5"
+           },
+           "versions": [
+            {
+             "id": "10000"
+            }
+           ]
+          },
+          "update": {}
+         }
+        ]
+       },
+       "schema": {
+        "$ref": "#/components/schemas/IssuesUpdateBean"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "example": "{\"issues\":[{\"id\":\"10000\",\"key\":\"ED-24\",\"self\":\"https://your-domain.atlassian.net/rest/api/3/issue/10000\",\"transition\":{\"status\":200,\"errorCollection\":{\"errorMessages\":[],\"errors\":{}}}},{\"id\":\"10001\",\"key\":\"ED-25\",\"self\":\"https://your-domain.atlassian.net/rest/api/3/issue/10001\"}],\"errors\":[]}",
+        "schema": {
+         "$ref": "#/components/schemas/CreatedIssues"
+        }
+       }
+      },
+      "description": "Returned if any of the issue or subtask creation requests were successful. A request may be unsuccessful when it:\n\n *  is missing required fields.\n *  contains invalid field values.\n *  contains fields that cannot be set for the issue type.\n *  is by a user who does not have the necessary permission.\n *  is to create a subtype in a project different that of the parent issue.\n *  is for a subtask when the option to create subtasks is disabled.\n *  is invalid for any other reason."
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "example": "{\"issues\":[],\"errors\":[{\"elementErrors\":{\"errorMessages\":[],\"errors\":{\"issuetype\":\"The issue type selected is invalid.\",\"project\":\"Sub-tasks must be created in the same project as the parent.\"}},\"failedElementNumber\":0,\"status\":400},{\"elementErrors\":{\"errorMessages\":[],\"errors\":{\"issuetype\":\"The issue type selected is invalid.\",\"project\":\"Sub-tasks must be created in the same project as the parent.\"}},\"failedElementNumber\":1,\"status\":400}]}",
+        "schema": {
+         "$ref": "#/components/schemas/CreatedIssues"
+        }
+       }
+      },
+      "description": "Returned if all requests are invalid. Requests may be unsuccessful when they:\n\n *  are missing required fields.\n *  contain invalid field values.\n *  contain fields that cannot be set for the issue type.\n *  are by a user who does not have the necessary permission.\n *  are to create a subtype in a project different that of the parent issue.\n *  is for a subtask when the option to create subtasks is disabled.\n *  are invalid for any other reason."
+     },
+     "401": {
+      "description": "Returned if the authentication credentials are incorrect or missing."
+     }
+    },
+    "security": [
+     {
+      "basicAuth": []
+     },
+     {
+      "OAuth2": [
+       "write:jira-work"
+      ]
+     },
+     {}
+    ],
+    "summary": "Bulk create issue",
+    "tags": [
+     "Issues"
+    ],
+    "x-atlassian-connect-scope": "WRITE",
+    "x-atlassian-data-security-policy": [
+     {
+      "app-access-rule-exempt": false
+     }
+    ],
+    "x-atlassian-oauth2-scopes": [
+     {
+      "scheme": "OAuth2",
+      "scopes": [
+       "write:jira-work"
+      ],
+      "state": "Current"
+     },
+     {
+      "scheme": "OAuth2",
+      "scopes": [
+       "write:issue:jira",
+       "write:comment:jira",
+       "write:comment.property:jira",
+       "write:attachment:jira",
+       "read:issue:jira"
+      ],
+      "state": "Beta"
+     }
+    ]
+   }
+  },
+  "/rest/api/3/issue/createmeta/{projectIdOrKey}/issuetypes": {
+   "get": {
+    "deprecated": false,
+    "description": "Returns a page of issue type metadata for a specified project. Use the information to populate the requests in [ Create issue](#api-rest-api-3-issue-post) and [Create issues](#api-rest-api-3-issue-bulk-post).\n\nThis operation can be accessed anonymously.\n\n**[Permissions](#permissions) required:** *Create issues* [project permission](https://confluence.atlassian.com/x/yodKLg) in the requested projects.",
+    "operationId": "getCreateIssueMetaIssueTypes",
+    "parameters": [
+     {
+      "description": "The ID or key of the project.",
+      "in": "path",
+      "name": "projectIdOrKey",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "The index of the first item to return in a page of results (page offset).",
+      "in": "query",
+      "name": "startAt",
+      "schema": {
+       "default": 0,
+       "format": "int32",
+       "type": "integer"
+      }
+     },
+     {
+      "description": "The maximum number of items to return per page.",
+      "in": "query",
+      "name": "maxResults",
+      "schema": {
+       "default": 50,
+       "format": "int32",
+       "maximum": 200,
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "example": "{\"issueTypes\":[{\"description\":\"An error in the code\",\"iconUrl\":\"https://your-domain.atlassian.net/images/icons/issuetypes/bug.png\",\"id\":\"1\",\"name\":\"Bug\",\"self\":\"https://your-domain.atlassian.net/rest/api/3/issueType/1\",\"subtask\":false}],\"maxResults\":1,\"startAt\":0,\"total\":1}",
+        "schema": {
+         "$ref": "#/components/schemas/PageOfCreateMetaIssueTypes"
+        }
+       }
+      },
+      "description": "Returned if the request is successful."
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "example": "{\"errorMessages\":[\"Parameter 'maxResults' must not exceed the limit '200'\"],\"errors\":{},\"httpStatusCode\":{\"empty\":false,\"present\":true}}"
+       }
+      },
+      "description": "Returned if the request is invalid."
+     },
+     "401": {
+      "description": "Returned if the authentication credentials are incorrect or missing."
+     }
+    },
+    "security": [
+     {
+      "basicAuth": []
+     },
+     {
+      "OAuth2": [
+       "read:jira-work"
+      ]
+     },
+     {}
+    ],
+    "summary": "Get create metadata issue types for a project",
+    "tags": [
+     "Issues"
+    ],
+    "x-atlassian-connect-scope": "READ",
+    "x-atlassian-data-security-policy": [
+     {
+      "app-access-rule-exempt": true
+     }
+    ],
+    "x-atlassian-oauth2-scopes": [
+     {
+      "scheme": "OAuth2",
+      "scopes": [
+       "read:jira-work"
+      ],
+      "state": "Current"
+     },
+     {
+      "scheme": "OAuth2",
+      "scopes": [
+       "read:issue-meta:jira",
+       "read:avatar:jira",
+       "read:field-configuration:jira"
+      ],
+      "state": "Beta"
+     }
+    ]
+   }
+  },
   "/rest/api/3/issue/{issueIdOrKey}": {
    "get": {
     "deprecated": false,
@@ -1761,6 +3031,233 @@
        "read:status:jira",
        "read:user:jira",
        "read:field-configuration:jira"
+      ],
+      "state": "Beta"
+     }
+    ]
+   },
+   "put": {
+    "deprecated": false,
+    "description": "Edits an issue. Issue properties may be updated as part of the edit. Please note that issue transition is not supported and is ignored here. To transition an issue, please use [Transition issue](#api-rest-api-3-issue-issueIdOrKey-transitions-post).\n\nThe edits to the issue's fields are defined using `update` and `fields`. The fields that can be edited are determined using [ Get edit issue metadata](#api-rest-api-3-issue-issueIdOrKey-editmeta-get).\n\n**Note:** This endpoint doesn't check screen configurations to determine if a field is editable. For more context, see the [Deprecation of override screen security](https://community.developer.atlassian.com/t/deprecation-of-override-screen-security/97153) announcement.\n\nThe parent field may be set by key or ID. For standard issue types, the parent may be removed by setting `update.parent.set.none` to *true*. Note that the `description`, `environment`, and any `textarea` type custom fields (multi-line text fields) take Atlassian Document Format content. Single line custom fields (`textfield`) accept a string and don't handle Atlassian Document Format content.\n\nConnect apps having an app user with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg), and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg), can override the screen security configuration using `overrideScreenSecurity` and `overrideEditableFlag`.\n\nThis operation can be accessed anonymously.\n\n**[Permissions](#permissions) required:**\n\n *  *Browse projects* and *Edit issues* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in.\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.",
+    "operationId": "editIssue",
+    "parameters": [
+     {
+      "description": "The ID or key of the issue.",
+      "in": "path",
+      "name": "issueIdOrKey",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "Whether a notification email about the issue update is sent to all watchers. To disable the notification, administer Jira or administer project permissions are required. If the user doesn't have the necessary permission the request is ignored.",
+      "in": "query",
+      "name": "notifyUsers",
+      "schema": {
+       "default": true,
+       "type": "boolean"
+      }
+     },
+     {
+      "description": "Whether screen security is overridden to enable hidden fields to be edited. Available to Connect and Forge app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).",
+      "in": "query",
+      "name": "overrideScreenSecurity",
+      "schema": {
+       "default": false,
+       "type": "boolean"
+      }
+     },
+     {
+      "description": "Whether screen security is overridden to enable uneditable fields to be edited. Available to Connect and Forge app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).",
+      "in": "query",
+      "name": "overrideEditableFlag",
+      "schema": {
+       "default": false,
+       "type": "boolean"
+      }
+     },
+     {
+      "description": "Whether the response should contain the issue with fields edited in this request. The returned issue will have the same format as in the [Get issue API](#api-rest-api-3-issue-issueidorkey-get).",
+      "in": "query",
+      "name": "returnIssue",
+      "schema": {
+       "default": false,
+       "type": "boolean"
+      }
+     },
+     {
+      "description": "The Get issue API expand parameter to use in the response if the `returnIssue` parameter is `true`.",
+      "in": "query",
+      "name": "expand",
+      "schema": {
+       "default": "",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "example": {
+        "fields": {
+         "customfield_10000": {
+          "content": [
+           {
+            "content": [
+             {
+              "text": "Investigation underway",
+              "type": "text"
+             }
+            ],
+            "type": "paragraph"
+           }
+          ],
+          "type": "doc",
+          "version": 1
+         },
+         "customfield_10010": 1,
+         "summary": "Completed orders still displaying in pending"
+        },
+        "historyMetadata": {
+         "activityDescription": "Complete order processing",
+         "actor": {
+          "avatarUrl": "http://mysystem/avatar/tony.jpg",
+          "displayName": "Tony",
+          "id": "tony",
+          "type": "mysystem-user",
+          "url": "http://mysystem/users/tony"
+         },
+         "cause": {
+          "id": "myevent",
+          "type": "mysystem-event"
+         },
+         "description": "From the order testing process",
+         "extraData": {
+          "Iteration": "10a",
+          "Step": "4"
+         },
+         "generator": {
+          "id": "mysystem-1",
+          "type": "mysystem-application"
+         },
+         "type": "myplugin:type"
+        },
+        "properties": [
+         {
+          "key": "key1",
+          "value": "Order number 10784"
+         },
+         {
+          "key": "key2",
+          "value": "Order number 10923"
+         }
+        ],
+        "update": {
+         "components": [
+          {
+           "set": ""
+          }
+         ],
+         "labels": [
+          {
+           "add": "triaged"
+          },
+          {
+           "remove": "blocker"
+          }
+         ],
+         "summary": [
+          {
+           "set": "Bug in business logic"
+          }
+         ],
+         "timetracking": [
+          {
+           "edit": {
+            "originalEstimate": "1w 1d",
+            "remainingEstimate": "4d"
+           }
+          }
+         ]
+        }
+       },
+       "schema": {
+        "$ref": "#/components/schemas/IssueUpdateDetails"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Returned if the request is successful and the `returnIssue` parameter is `true`"
+     },
+     "204": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Returned if the request is successful."
+     },
+     "400": {
+      "description": "Returned if:\n\n *  the request body is missing.\n *  the user does not have the necessary permission to edit one or more fields.\n *  the request includes one or more fields that don't exist or aren't associated with the project and issue type.\n *  the request includes an invalid transition."
+     },
+     "401": {
+      "description": "Returned if the authentication credentials are incorrect or missing."
+     },
+     "403": {
+      "description": "Returned if the user uses `overrideScreenSecurity` or `overrideEditableFlag` but doesn't have the necessary permission."
+     },
+     "404": {
+      "description": "Returned if the issue is not found or the user does not have permission to view it."
+     },
+     "409": {
+      "description": "Returned if the issue could not be updated due to a conflicting update."
+     },
+     "422": {
+      "description": "Returned if a configuration problem prevents the issue being updated."
+     }
+    },
+    "security": [
+     {
+      "basicAuth": []
+     },
+     {
+      "OAuth2": [
+       "write:jira-work"
+      ]
+     },
+     {}
+    ],
+    "summary": "Edit issue",
+    "tags": [
+     "Issues"
+    ],
+    "x-atlassian-connect-scope": "WRITE",
+    "x-atlassian-data-security-policy": [
+     {
+      "app-access-rule-exempt": false
+     }
+    ],
+    "x-atlassian-oauth2-scopes": [
+     {
+      "scheme": "OAuth2",
+      "scopes": [
+       "write:jira-work"
+      ],
+      "state": "Current"
+     },
+     {
+      "scheme": "OAuth2",
+      "scopes": [
+       "write:issue:jira"
       ],
       "state": "Beta"
      }
@@ -2159,6 +3656,119 @@
       "scopes": [
        "write:issue:jira",
        "write:issue.property:jira"
+      ],
+      "state": "Beta"
+     }
+    ]
+   }
+  },
+  "/rest/api/3/issueLink": {
+   "post": {
+    "deprecated": false,
+    "description": "Creates a link between two issues. Use this operation to indicate a relationship between two issues and optionally add a comment to the from (outward) issue. To use this resource the site must have [Issue Linking](https://confluence.atlassian.com/x/yoXKM) enabled.\n\nThis resource returns nothing on the creation of an issue link. To obtain the ID of the issue link, use `https://your-domain.atlassian.net/rest/api/3/issue/[linked issue key]?fields=issuelinks`.\n\nIf the link request duplicates a link, the response indicates that the issue link was created. If the request included a comment, the comment is added.\n\nThis operation can be accessed anonymously.\n\n**[Permissions](#permissions) required:**\n\n *  *Browse project* [project permission](https://confluence.atlassian.com/x/yodKLg) for all the projects containing the issues to be linked,\n *  *Link issues* [project permission](https://confluence.atlassian.com/x/yodKLg) on the project containing the from (outward) issue,\n *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.\n *  If the comment has visibility restrictions, belongs to the group or has the role visibility is restricted to.",
+    "operationId": "linkIssues",
+    "parameters": [],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "example": {
+        "comment": {
+         "body": {
+          "content": [
+           {
+            "content": [
+             {
+              "text": "Linked related issue!",
+              "type": "text"
+             }
+            ],
+            "type": "paragraph"
+           }
+          ],
+          "type": "doc",
+          "version": 1
+         },
+         "visibility": {
+          "identifier": "276f955c-63d7-42c8-9520-92d01dca0625",
+          "type": "group",
+          "value": "jira-software-users"
+         }
+        },
+        "inwardIssue": {
+         "key": "HSP-1"
+        },
+        "outwardIssue": {
+         "key": "MKY-1"
+        },
+        "type": {
+         "name": "Duplicate"
+        }
+       },
+       "schema": {
+        "$ref": "#/components/schemas/LinkIssueRequestJsonBean"
+       }
+      }
+     },
+     "description": "The issue link request.",
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Returned if the request is successful."
+     },
+     "400": {
+      "description": "Returned if the comment is not created. The response contains an error message indicating why the comment wasn't created. The issue link is also not created."
+     },
+     "401": {
+      "description": "Returned if the authentication credentials are incorrect or missing."
+     },
+     "404": {
+      "description": "Returned if:\n\n *  issue linking is disabled.\n *  the user cannot view one or both of the issues. For example, the user doesn't have *Browse project* project permission for a project containing one of the issues.\n *  the user does not have *link issues* project permission.\n *  either of the link issues are not found.\n *  the issue link type is not found."
+     },
+     "413": {
+      "description": "Returned if the per-issue limit for issue links has been breached."
+     }
+    },
+    "security": [
+     {
+      "basicAuth": []
+     },
+     {
+      "OAuth2": [
+       "write:jira-work"
+      ]
+     },
+     {}
+    ],
+    "summary": "Create issue link",
+    "tags": [
+     "Issue links"
+    ],
+    "x-atlassian-connect-scope": "WRITE",
+    "x-atlassian-data-security-policy": [
+     {
+      "app-access-rule-exempt": false
+     }
+    ],
+    "x-atlassian-oauth2-scopes": [
+     {
+      "scheme": "OAuth2",
+      "scopes": [
+       "write:jira-work"
+      ],
+      "state": "Current"
+     },
+     {
+      "scheme": "OAuth2",
+      "scopes": [
+       "write:comment:jira",
+       "write:issue:jira",
+       "write:issue-link:jira"
       ],
       "state": "Beta"
      }

@@ -144,4 +144,48 @@ class JiraClientTest {
                 .isInstanceOf(org.springframework.web.client.RestClientResponseException.class);
         assertThat(calls).hasSize(1);
     }
+
+    @Test
+    void createsEditsAndLinksIssues() {
+        reply("/rest/api/3/issue", 201, "{\"id\":\"10\",\"key\":\"ALE-7\",\"self\":\"x\"}");
+        reply("/rest/api/3/issue/ALE-7", 204, "");
+        reply("/rest/api/3/issueLink", 201, "");
+
+        var created = jira.issues().createIssue(new IssueUpdateDetails().fields(Map.of(
+                "project", Map.of("key", "ALE"), "issuetype", Map.of("id", "10001"), "summary", "A story",
+                "labels", List.of("factory"), "description", JiraDocuments.markdown("**done** when `x`"))), null);
+        jira.issues().editIssue("ALE-7", new IssueUpdateDetails().fields(Map.of("summary", "Renamed")), null, null, null, null, null);
+        jira.issueLinks().linkIssues(new com.anode.jira.client.model.LinkIssueRequestJsonBean()
+                .type(new com.anode.jira.client.model.IssueLinkType().name("Blocks"))
+                .inwardIssue(new com.anode.jira.client.model.LinkedIssue().key("ALE-6"))
+                .outwardIssue(new com.anode.jira.client.model.LinkedIssue().key("ALE-7")));
+
+        assertThat(created.getKey()).isEqualTo("ALE-7");
+        assertThat(calls).extracting(Call::method, Call::path).containsExactly(
+                org.assertj.core.groups.Tuple.tuple("POST", "/rest/api/3/issue"),
+                org.assertj.core.groups.Tuple.tuple("PUT", "/rest/api/3/issue/ALE-7"),
+                org.assertj.core.groups.Tuple.tuple("POST", "/rest/api/3/issueLink"));
+        assertThat(calls.get(0).body()).contains("\"labels\":[\"factory\"]", "\"type\":\"strong\"");
+        assertThat(calls.get(2).body()).contains("\"name\":\"Blocks\"", "\"inwardIssue\":{\"key\":\"ALE-6\"}")
+                .doesNotContain("null");
+    }
+
+    @Test
+    void bulkCreateReturnsPartialFailuresAndIssueTypesAreListed() {
+        reply("/rest/api/3/issue/bulk", 201,
+                "{\"issues\":[{\"id\":\"1\",\"key\":\"ALE-8\"}],\"errors\":[{\"status\":400,\"failedElementNumber\":1,"
+                        + "\"elementErrors\":{\"errors\":{\"summary\":\"required\"},\"errorMessages\":[]}}]}");
+        reply("/rest/api/3/issue/createmeta/ALE/issuetypes", 200,
+                "{\"startAt\":0,\"maxResults\":50,\"total\":2,\"issueTypes\":[{\"id\":\"1\",\"name\":\"Epic\",\"hierarchyLevel\":1},"
+                        + "{\"id\":\"2\",\"name\":\"Story\",\"hierarchyLevel\":0}]}");
+
+        var bulk = jira.issues().createIssues(new com.anode.jira.client.model.IssuesUpdateBean()
+                .addIssueUpdatesItem(new IssueUpdateDetails().fields(Map.of("summary", "a")))
+                .addIssueUpdatesItem(new IssueUpdateDetails().fields(Map.of("summary", ""))));
+        assertThat(bulk.getIssues()).extracting(i -> i.getKey()).containsExactly("ALE-8");
+        assertThat(bulk.getErrors().get(0).getFailedElementNumber()).isEqualTo(1);
+
+        var types = jira.issues().getCreateIssueMetaIssueTypes("ALE", 0, 50);
+        assertThat(types.getIssueTypes()).extracting(t -> t.getName() + ":" + t.getHierarchyLevel()).containsExactly("Epic:1", "Story:0");
+    }
 }

@@ -21,7 +21,7 @@ Import the BOM to align versions:
 | `spring-boot-starter-security` | One security filter chain: OIDC login (Okta, Cognito, any provider), self-issued JWTs, mock login, Kerberos; roles from groups; CSRF for sessions |
 | `spring-boot-starter-github` | GitHub App clients per repository, scoped installation tokens, verified webhooks |
 | `spring-boot-starter-gitlab` | gitlab4j `GitLabApi`, verified webhooks |
-| `spring-boot-starter-jira` | Jira Cloud client generated from Atlassian's OpenAPI spec (issues, JQL, comments, transitions) |
+| `spring-boot-starter-jira` | Jira Cloud client generated from Atlassian's OpenAPI spec (issues, JQL, comments, transitions, creating and linking issues) |
 | `spring-boot-starter-notion` | notion-sdk-jvm `NotionClient` |
 | `spring-boot-starter-logging` | Business-event logging (markers, JSON/XML encoders, archive) |
 | `spring-boot-starter-jdbc` | AWS Advanced JDBC Wrapper from `JDBC_WRAPPER_SHARED_URL` |

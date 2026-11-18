@@ -16,6 +16,12 @@ OPERATIONS = {
     "getTransitions",
     "doTransition",
     "getCurrentUser",
+    # writing issues (productDesigner's Roadmap export, digital-factory)
+    "createIssue",
+    "createIssues",
+    "editIssue",
+    "linkIssues",
+    "getCreateIssueMetaIssueTypes",
 }
 
 spec = json.load(open(sys.argv[1]))
