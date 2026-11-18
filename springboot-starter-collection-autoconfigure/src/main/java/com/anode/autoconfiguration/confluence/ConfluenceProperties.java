@@ -18,6 +18,13 @@ public class ConfluenceProperties {
     private String email;
     /** API token of that account. */
     private String apiToken;
+    /**
+     * The site's cloud id, for scoped API tokens: Atlassian only accepts them through its gateway
+     * ({@code <gateway-url>/ex/confluence/<cloud-id>}); unscoped tokens call the site directly. Empty: the site.
+     */
+    private String cloudId;
+    /** Atlassian API gateway, used with {@code cloud-id}. */
+    private String gatewayUrl = "https://api.atlassian.com";
     private final Retry retry = new Retry();
 
     /** Retries of rate-limited (429) and unavailable (502/503/504) responses. */
@@ -40,6 +47,20 @@ public class ConfluenceProperties {
     public void setBaseUrl(String baseUrl) { this.baseUrl = baseUrl; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+    public String getCloudId() { return cloudId; }
+
+    public void setCloudId(String cloudId) { this.cloudId = cloudId; }
+
+    public String getGatewayUrl() { return gatewayUrl; }
+
+    public void setGatewayUrl(String gatewayUrl) { this.gatewayUrl = gatewayUrl; }
+
+    /** Where Confluence is called: the site, or the gateway when a cloud id is set. No trailing slash. */
+    public String url() {
+        String url = cloudId == null || cloudId.isBlank() ? baseUrl : gatewayUrl.replaceAll("/+$", "") + "/ex/confluence/" + cloudId.strip();
+        return url.replaceAll("/+$", "");
+    }
+
     public String getApiToken() { return apiToken; }
     public void setApiToken(String apiToken) { this.apiToken = apiToken; }
     public Retry getRetry() { return retry; }

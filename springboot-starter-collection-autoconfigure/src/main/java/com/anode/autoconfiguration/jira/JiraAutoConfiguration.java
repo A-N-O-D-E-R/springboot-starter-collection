@@ -27,6 +27,6 @@ public class JiraAutoConfiguration {
                 .multiplier(2)
                 .maxDelay(retry.getMaxDelay())
                 .build();
-        return new JiraClient(properties.getBaseUrl(), properties.getEmail(), properties.getApiToken(), policy);
+        return new JiraClient(properties.url(), properties.getEmail(), properties.getApiToken(), policy);
     }
 }

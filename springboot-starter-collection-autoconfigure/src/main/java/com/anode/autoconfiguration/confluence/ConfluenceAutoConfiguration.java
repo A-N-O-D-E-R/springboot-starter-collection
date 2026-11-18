@@ -35,7 +35,7 @@ public class ConfluenceAutoConfiguration {
                 .maxDelay(retry.getMaxDelay())
                 .build();
         RestClient rest = builders.getIfAvailable(RestClient::builder).clone()
-                .baseUrl(properties.getBaseUrl())
+                .baseUrl(properties.url())
                 .defaultHeaders(headers -> headers.setBasicAuth(properties.getEmail(), properties.getApiToken()))
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .requestInterceptor(new TransientResponseRetry(policy))
