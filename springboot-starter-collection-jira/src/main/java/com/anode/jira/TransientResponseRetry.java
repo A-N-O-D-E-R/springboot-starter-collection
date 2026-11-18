@@ -5,6 +5,7 @@ import java.util.Set;
 import org.springframework.core.retry.RetryException;
 import org.springframework.core.retry.RetryPolicy;
 import org.springframework.core.retry.RetryTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -18,6 +19,11 @@ import org.springframework.web.client.HttpServerErrorException;
 /**
  * Retries 429/502/503/504 responses with Spring's {@link RetryTemplate}. A {@code Retry-After} header given in
  * seconds is honoured (capped at {@value #MAX_RETRY_AFTER_SECONDS}s) on top of the policy's back-off.
+ * <p>
+ * 429 is retried for every method: the request was refused before it was processed. 502/503/504 only for
+ * idempotent methods (GET, HEAD, PUT, DELETE, OPTIONS): a gateway error on a POST may hide a request that did go
+ * through, and retrying it would create the issue or the comment twice. Those are returned as they are, and the
+ * caller decides what an unknown outcome means.
  */
 public final class TransientResponseRetry implements ClientHttpRequestInterceptor {
 
@@ -25,6 +31,8 @@ public final class TransientResponseRetry implements ClientHttpRequestIntercepto
             HttpStatus.TOO_MANY_REQUESTS, HttpStatus.BAD_GATEWAY, HttpStatus.SERVICE_UNAVAILABLE, HttpStatus.GATEWAY_TIMEOUT);
 
     static final long MAX_RETRY_AFTER_SECONDS = 30;
+
+    private static final Set<HttpMethod> IDEMPOTENT = Set.of(HttpMethod.GET, HttpMethod.HEAD, HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.OPTIONS);
 
     private final RetryTemplate retryTemplate;
 
@@ -49,7 +57,7 @@ public final class TransientResponseRetry implements ClientHttpRequestIntercepto
             return retryTemplate.execute(() -> {
                 ClientHttpResponse response = execution.execute(request, body);
                 HttpStatus status = HttpStatus.resolve(response.getStatusCode().value());
-                if (status != null && TRANSIENT.contains(status)) {
+                if (status != null && TRANSIENT.contains(status) && (status == HttpStatus.TOO_MANY_REQUESTS || IDEMPOTENT.contains(request.getMethod()))) {
                     long wait = retryAfterSeconds(response);
                     response.close();
                     sleep(wait);
